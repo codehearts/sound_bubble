@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% block body %}
+	<article id="current">
+		<figure class="artwork">
+			<img src="{{ current.artwork }}">
+		</figure>
+		<section class="meta">
+			{% if session.logged_in %}
+				<div class="audio-controls">
+					<a class="state-button {% if current.is_playing %}pause{% else %}play{% endif %}-button"></a>
+					<a class="next-button"></a>
+				</div>
+			{% endif %}
+
+			<h1 class="title">{{ current.title }}</h1>
+			<h2 class="artist">{{ current.artist }}</h2>
+			<h3 class="album">{{ current.album }}</h3>
+			<h4 class="time-data">
+				<span class="time">{{ current.time }}</span>
+
+				<progress max="100"
+				          data-server-time="{{ current.server_time }}"
+						  data-start-time="{{ current.start_time }}"
+						  data-is-playing="{{ current.is_playing }}"
+						  value="{{ current.progress }}">
+				</progress>
+
+				<span class="length">{{ current.length }}</span>
+			</h4>
+		</section>
+	</article>
+
+	{% if session.logged_in %}
+	<section class="playlist-editor">
+		<form action="" method="post" enctype="multipart/form-data" class="add-song-form">
+			<input type="hidden" name="action" value="add_music">
+			<input type="file" name="song">
+		</form>
+	</section>
+	{% endif %}
+{% endblock %}

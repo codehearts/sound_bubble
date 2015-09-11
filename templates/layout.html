@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<head>
+	<title>{{ config.TITLE }}</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+	<header id="masthead">
+		<h1>{{ config.TITLE }}</h1>
+
+		{% if not session.logged_in %}
+
+		<form action="" method="POST">
+			<input type="hidden" name="action" value="login">
+			<input type="text" name="username">
+			<input type="password" name="password">
+			<input type="submit" value="Log In">
+		</form>
+
+		{% else %}
+
+		<form action="" method="POST">
+			<input type="hidden" name="action" value="logout">
+			<input type="submit" value="Log Out">
+		</form>
+
+		{% endif %}
+	</header>
+
+	{% if error %}
+	<p class="error-msg">{{ error }}</p>
+	{% endif %}
+
+	{% if message %}
+	<p class="msg">{{ message }}</p>
+	{% endif %}
+
+	{% block body %}{% endblock %}
+
+	<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>
+	<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
