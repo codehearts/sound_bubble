@@ -1,5 +1,5 @@
 *.swp
 *.py[cod]
-static/covers/
 config.py
 __pycache__
+static/covers/
