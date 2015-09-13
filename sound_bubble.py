@@ -108,7 +108,9 @@ def get_current_song():
 
 @socket.on('connect')
 def on_connect():
-	pass
+	data = current_song
+	data['server_time'] = time.time()
+	emit('song change', data)
 
 @socket.on('play')
 def on_play():
@@ -191,7 +193,7 @@ def show_index():
 
 	data = current_song
 	data['server_time'] = time.time()
-	return render_template('index.html', current=data, error=error, message=msg)
+	return render_template('index.html', error=error, message=msg)
 
 def mpd_acquire():
 	"""Allows MPD commands to be executed by the main thread.

@@ -13,7 +13,7 @@ var sound_bubble = (function() {
 		next_button   = document.querySelector('#current .next-button'),
 		add_song_form = document.querySelector('.add-song-form'),
 		add_song_file = null,
-		is_playing     = false,
+		is_playing     = null,
 		start_time     = 0,
 		time_seconds   = 0,
 		length_seconds = 0,
@@ -67,10 +67,14 @@ var sound_bubble = (function() {
 	 * Also updates the `is_playing` variable.
 	 */
 	toggle_button = function() {
-		is_playing = !is_playing;
 		if (button) {
-			button.classList.toggle('play-button');
-			button.classList.toggle('pause-button');
+			if (is_playing) {
+				button.classList.remove('play-button');
+				button.classList.add('pause-button');
+			} else {
+				button.classList.add('play-button');
+				button.classList.remove('pause-button');
+			}
 		}
 	},
 
@@ -109,7 +113,13 @@ var sound_bubble = (function() {
 		progress.value     = song_data.progress;
 		artwork.src        = song_data.artwork;
 
+		if (is_playing === null) {
+			is_playing = song_data.is_playing;
+			toggle_button();
+		}
+
 		if (is_playing != song_data.is_playing) {
+			is_playing = !is_playing;
 			toggle_button();
 		}
 
@@ -167,27 +177,19 @@ var sound_bubble = (function() {
 			});
 		}
 
-		is_playing = (progress.getAttribute('data-is-playing') == 'True');
+		// Tells the server that we've connected
+		socket.on('connect', function() {
+			socket.emit('connect');
 
-		time_diff = get_timestamp() - parseInt(progress.getAttribute('data-server-time'), 10);
-		start_time     = parseInt(progress.getAttribute('data-start-time'), 10) + time_diff;
-		length_seconds = string_to_seconds(length.textContent);
+			increment_time();
+			window.setInterval(increment_time, 1000);
+		});
 
-		increment_time();
-		window.setInterval(increment_time, 1000);
+		// Updates the current song when the server sends a 'song change' event
+		socket.on('song change', update_current_song);
 	};
 
-
 	init();
-
-
-	// Tells the server that we've connected
-	socket.on('connect', function() {
-		socket.emit('connect');
-	});
-
-	// Updates the current song when the server sends a 'song change' event
-	socket.on('song change', update_current_song);
 
 	return {};
 
