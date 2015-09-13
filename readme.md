@@ -17,4 +17,5 @@ Simply run `python sound_bubble.py`(or `python2` on distributions like Arch Linu
 - [x] Extract album artwork from audio files
   - [ ] Resize cover art for reduced bandwidth
   - [ ] Download missing artwork from online APIs
+  - [ ] Change/upload artwork for songs
 - [ ] Mobile-friendly layout
