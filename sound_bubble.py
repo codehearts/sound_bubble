@@ -1,7 +1,9 @@
 import time
+from sb_user import SoundBubbleUser
 from audio_manager import AudioManager
-from flask import Flask, request, session, g, redirect, url_for, \
+from flask import Flask, request, g, redirect, url_for, \
      abort, render_template, flash
+from flask.ext.login import LoginManager, current_user, login_user, logout_user
 from flask.ext.socketio import SocketIO, emit
 from werkzeug import secure_filename
 
@@ -9,7 +11,20 @@ app = Flask(__name__)
 app.config.from_object('config')
 socket = SocketIO(app)
 
+SoundBubbleUser.register_users({
+	app.config['USERNAME']: app.config['PASSWORD']
+})
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+
 audio = AudioManager(app.config)
+
+
+
+@login_manager.user_loader
+def load_user(id):
+    return SoundBubbleUser.get(id)
 
 
 
@@ -29,25 +44,25 @@ def on_connect():
 @socket.on('play')
 def on_play():
 	"""Sends a play command to MPD if the user is logged in."""
-	if session['logged_in']:
+	if current_user.is_authenticated():
 		audio.play()
 
 @socket.on('pause')
 def on_pause():
 	"""Sends a pause command to MPD if the user is logged in."""
-	if session['logged_in']:
+	if current_user.is_authenticated():
 		audio.pause()
 
 @socket.on('next song')
 def on_next_song():
 	"""Sends a next command to MPD if the user is logged in."""
-	if session['logged_in']:
+	if current_user.is_authenticated():
 		audio.play_next_song()
 
 @socket.on('previous song')
 def on_previous_song():
 	"""Sends a previous command to MPD if the user is logged in."""
-	if session['logged_in']:
+	if current_user.is_authenticated():
 		audio.play_previous_song()
 
 
@@ -60,13 +75,14 @@ def show_index():
 
 	if request.method == 'POST':
 		if request.form['action'] == 'login':
-			if request.form['username'] != app.config['USERNAME'] or request.form['password'] != app.config['PASSWORD']:
-				error = 'Invalid username or password.'
+			user = SoundBubbleUser.get(request.form['username'])
+			if (user and user.password == request.form['password']):
+				login_user(user, remember=True)
 			else:
-				session['logged_in'] = True
+				error = 'Invalid username or password.'
 		elif request.form['action'] == 'logout':
-			session.pop('logged_in', None)
-		elif request.form['action'] == 'add_music' and session['logged_in']:
+			logout_user()
+		elif request.form['action'] == 'add_music' and current_user.is_authenticated():
 			audio_file = request.files.get('song', None)
 			if audio_file and audio.is_allowed_audio_file(audio_file.filename):
 				filename = secure_filename(audio_file.filename)

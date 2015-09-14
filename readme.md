@@ -14,6 +14,7 @@ Simply run `python sound_bubble.py`(or `python2` on distributions like Arch Linu
   - [ ] Manage current playlist
   - [ ] Set shuffle/repeat/single mode/consume
   - [ ] Set priority of songs
+  - [x] Persistent login between sessions
 - [x] Extract album artwork from audio files
   - [ ] Resize cover art for reduced bandwidth
   - [ ] Download missing artwork from online APIs
