@@ -44,25 +44,25 @@ def on_connect():
 @socket.on('play')
 def on_play():
 	"""Sends a play command to MPD if the user is logged in."""
-	if current_user.is_authenticated():
+	if current_user.is_authenticated:
 		audio.play()
 
 @socket.on('pause')
 def on_pause():
 	"""Sends a pause command to MPD if the user is logged in."""
-	if current_user.is_authenticated():
+	if current_user.is_authenticated:
 		audio.pause()
 
 @socket.on('next song')
 def on_next_song():
 	"""Sends a next command to MPD if the user is logged in."""
-	if current_user.is_authenticated():
+	if current_user.is_authenticated:
 		audio.play_next_song()
 
 @socket.on('previous song')
 def on_previous_song():
 	"""Sends a previous command to MPD if the user is logged in."""
-	if current_user.is_authenticated():
+	if current_user.is_authenticated:
 		audio.play_previous_song()
 
 
@@ -82,7 +82,7 @@ def show_index():
 				error = 'Invalid username or password.'
 		elif request.form['action'] == 'logout':
 			logout_user()
-		elif request.form['action'] == 'add_music' and current_user.is_authenticated():
+		elif request.form['action'] == 'add_music' and current_user.is_authenticated:
 			audio_file = request.files.get('song', None)
 			if audio_file and audio.is_allowed_audio_file(audio_file.filename):
 				filename = secure_filename(audio_file.filename)
