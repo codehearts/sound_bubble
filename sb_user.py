@@ -23,6 +23,7 @@ class SoundBubbleUser(UserMixin):
 		Initializes a new SoundBubbleUser if a user has the given id,
 		otherwise a UserNotFoundError is raised.
 		"""
+		id = id.strip().lower()
 		if not id in self._users:
 			raise UserNotFoundError()
 		self.id = id
