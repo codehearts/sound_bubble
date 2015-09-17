@@ -3,7 +3,7 @@
 	-moz-transform-style: preserve-3d;
 	transform-style: preserve-3d;
 
-	background: #c69;
+	background: $accent_color;
 	margin: 0 0 1.8em;
 	padding: 0 5%;
 	display: -webkit-flex;
@@ -12,7 +12,7 @@
 	align-items: center;
 	-webkit-justify-content: space-between;
 	justify-content: space-between;
-	color: #e0eeee;
+	color: $secondary_text_color;
 
 	h1 {
 		display: inline-block;
@@ -20,16 +20,21 @@
 		font-weight: 400;
 	}
 
+	form {
+	}
+
 	input {
-		color: #e0eeee;
+		color: $secondary_text_color;
 
 		&:focus {
 			background: rgba(255,255,255,0.1);
 		}
 
-		&[type=submit]:hover {
-			background: #e0eeee;
-			color: #c69;
+		&[type=submit] {
+			&:hover {
+				background: #e0eeee;
+				color: $accent_color;
+			}
 		}
 	}
 }

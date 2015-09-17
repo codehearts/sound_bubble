@@ -1,0 +1,39 @@
+#current {
+	display: block;
+	height: auto;
+
+	.artwork {
+		transition: height 1s ease;
+		background: #fff;
+		padding: 5% 5%;
+		display: block;
+		height: auto;
+		width: 90%;
+
+		& > img {
+			margin: 0 auto;
+			height: auto;
+			max-width: 100%;
+		}
+	}
+
+	.meta {
+		padding: 0 5% 5%;
+	}
+
+	.title {
+		font-size: 2.4em;
+	}
+
+	.artist {
+		font-size: 1.6em;
+	}
+
+	.time {
+		margin-bottom: -0.5em;
+	}
+
+	progress {
+		float: none;
+	}
+}

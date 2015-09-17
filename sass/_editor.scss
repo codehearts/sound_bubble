@@ -21,7 +21,7 @@
 
 	&:hover {
 		&::before {
-			background: #c69;
+			background: $accent-color;
 			border-radius: 100px;
 			color: #e0eeee;
 		}

@@ -10,7 +10,7 @@
 		width: 30px;
 
 		&:hover {
-			background: #c69;
+			background: $accent_color;
 			color: #e0eeee;
 		}
 
@@ -36,9 +36,9 @@
 	&::before {
 		border-top: 9px solid transparent;
 		border-bottom: 9px solid transparent;
-		border-left: 14px solid #c69;
-		top: 6px;
-		left: 10px;
+		border-left: 14px solid $accent_color;
+		top: 20%;
+		left: 33.333%;
 		height: 0;
 		width: 0;
 	}
@@ -53,14 +53,14 @@
 .pause-button {
 	&::before,
 	&::after {
-		background: #c69;
-		top: 6px;
-		height: 18px;
-		width: 4px;
+		background: $accent_color;
+		top: 20%;
+		height: 60%;
+		width: 13.333%;
 	}
 
-	&::before { left: 9px; }
-	&::after { right: 9px; }
+	&::before { left: 30%; }
+	&::after { right: 30%; }
 
 	&:hover {
 		&::before,
@@ -74,19 +74,19 @@
 	&::before {
 		border-top: 9px solid transparent;
 		border-bottom: 9px solid transparent;
-		border-left: 14px solid #c69;
-		top: 6px;
-		left: 7px;
+		border-left: 14px solid $accent_color;
+		top: 20%;
+		left: 23.333%;
 		height: 0;
 		width: 0;
 	}
 
 	&::after {
-		background: #c69;
-		top: 6px;
-		right: 7px;
-		height: 18px;
-		width: 4px;
+		background: $accent_color;
+		top: 20%;
+		right: 23.333%;
+		height: 60%;
+		width: 13.333%;
 	}
 
 	&:hover {

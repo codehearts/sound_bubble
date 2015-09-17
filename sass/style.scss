@@ -7,3 +7,9 @@
 @import 'current';
 @import 'controls';
 @import 'editor';
+
+@media (max-width: 640px) {
+	@import 'layout_mini';
+	@import 'current_mini';
+	@import 'controls_mini';
+}

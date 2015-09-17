@@ -1,0 +1,18 @@
+.audio-controls {
+	text-align: center;
+	float: none;
+
+	a {
+		height: 80px;
+		width: 80px;
+	}
+}
+
+.play-button,
+.next-button {
+	&::before {
+		border-top: 24px solid transparent;
+		border-bottom: 24px solid transparent;
+		border-left: 37px solid $accent_color;
+	}
+}

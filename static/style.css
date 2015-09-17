@@ -6,6 +6,9 @@ body {
   color: #c69; }
 
 input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
   transition: all 0.25s ease;
   background: transparent;
   border: none;
@@ -165,8 +168,8 @@ progress[value]::-moz-progress-bar {
   border-top: 9px solid transparent;
   border-bottom: 9px solid transparent;
   border-left: 14px solid #c69;
-  top: 6px;
-  left: 10px;
+  top: 20%;
+  left: 33.333%;
   height: 0;
   width: 0; }
 .play-button:hover::before {
@@ -174,13 +177,13 @@ progress[value]::-moz-progress-bar {
 
 .pause-button::before, .pause-button::after {
   background: #c69;
-  top: 6px;
-  height: 18px;
-  width: 4px; }
+  top: 20%;
+  height: 60%;
+  width: 13.333%; }
 .pause-button::before {
-  left: 9px; }
+  left: 30%; }
 .pause-button::after {
-  right: 9px; }
+  right: 30%; }
 .pause-button:hover::before, .pause-button:hover::after {
   background: #fff; }
 
@@ -188,16 +191,16 @@ progress[value]::-moz-progress-bar {
   border-top: 9px solid transparent;
   border-bottom: 9px solid transparent;
   border-left: 14px solid #c69;
-  top: 6px;
-  left: 7px;
+  top: 20%;
+  left: 23.333%;
   height: 0;
   width: 0; }
 .next-button::after {
   background: #c69;
-  top: 6px;
-  right: 7px;
-  height: 18px;
-  width: 4px; }
+  top: 20%;
+  right: 23.333%;
+  height: 60%;
+  width: 13.333%; }
 .next-button:hover::after {
   background: #fff; }
 .next-button:hover::before {
@@ -237,5 +240,47 @@ progress[value]::-moz-progress-bar {
     font-size: 20px;
     cursor: pointer;
     opacity: 0; }
+
+@media (max-width: 640px) {
+  .content-section {
+    width: 100%; }
+
+  #current {
+    display: block;
+    height: auto; }
+    #current .artwork {
+      transition: height 1s ease;
+      background: #fff;
+      padding: 5% 5%;
+      display: block;
+      height: auto;
+      width: 90%; }
+      #current .artwork > img {
+        margin: 0 auto;
+        height: auto;
+        max-width: 100%; }
+    #current .meta {
+      padding: 0 5% 5%; }
+    #current .title {
+      font-size: 2.4em; }
+    #current .artist {
+      font-size: 1.6em; }
+    #current .time {
+      margin-bottom: -0.5em; }
+    #current progress {
+      float: none; }
+
+  .audio-controls {
+    text-align: center;
+    float: none; }
+    .audio-controls a {
+      height: 80px;
+      width: 80px; }
+
+  .play-button::before,
+  .next-button::before {
+    border-top: 24px solid transparent;
+    border-bottom: 24px solid transparent;
+    border-left: 37px solid #c69; } }
 
 /*# sourceMappingURL=style.css.map */
