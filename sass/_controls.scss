@@ -1,0 +1,96 @@
+.audio-controls {
+	float: right;
+
+	a {
+		border-radius: 100%;
+		position: relative;
+		display: inline-block;
+		cursor: pointer;
+		height: 30px;
+		width: 30px;
+
+		&:hover {
+			background: #c69;
+			color: #e0eeee;
+		}
+
+		& {
+			transition: background 0.25s ease;
+		}
+
+		&::after,
+		&::before {
+			transition: background 0.25s ease, border-color 0.25s ease;
+		}
+
+		&::after,
+		&::before {
+			display: block;
+			position: absolute;
+			content: '';
+		}
+	}
+}
+
+.play-button {
+	&::before {
+		border-top: 9px solid transparent;
+		border-bottom: 9px solid transparent;
+		border-left: 14px solid #c69;
+		top: 6px;
+		left: 10px;
+		height: 0;
+		width: 0;
+	}
+
+	&:hover {
+		&::before {
+			border-left-color: #fff;
+		}
+	}
+}
+
+.pause-button {
+	&::before,
+	&::after {
+		background: #c69;
+		top: 6px;
+		height: 18px;
+		width: 4px;
+	}
+
+	&::before { left: 9px; }
+	&::after { right: 9px; }
+
+	&:hover {
+		&::before,
+		&::after {
+			background: #fff;
+		}
+	}
+}
+
+.next-button {
+	&::before {
+		border-top: 9px solid transparent;
+		border-bottom: 9px solid transparent;
+		border-left: 14px solid #c69;
+		top: 6px;
+		left: 7px;
+		height: 0;
+		width: 0;
+	}
+
+	&::after {
+		background: #c69;
+		top: 6px;
+		right: 7px;
+		height: 18px;
+		width: 4px;
+	}
+
+	&:hover {
+		&::after { background:#fff; }
+		&::before { border-left-color: #fff; }
+	}
+}

@@ -2,6 +2,14 @@
 <head>
 	<title>{{ config.TITLE }}</title>
 	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+	<link rel="apple-touch-icon" sizes="114x114" href="{{ url_for('static', filename='apple-icon-114x114.png') }}">
+	<link rel="apple-touch-icon" sizes="144x144" href="{{ url_for('static', filename='apple-icon-144x144.png') }}">
+	<link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-icon-180x180.png') }}">
+	<link rel="icon" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
+	<link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="translucent black">
 </head>
 <body>
 	<header id="masthead">

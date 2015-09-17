@@ -1,0 +1,61 @@
+body {
+	background: $background_color;
+	margin: 0;
+	font-family: $sans_serif;
+	font-size: $base_font_size;
+	color: $accent_color;
+}
+
+input {
+	transition: all 0.25s ease;
+	background: transparent;
+	border: none;
+	outline: 0;
+	font-family: $sans_serif;
+	font-size: 1.6em;
+}
+
+input[type=password],
+input[type=text] {
+	border-bottom: 1px solid $secondary_text_color;
+	padding: 0 0.25em;
+	color: $secondary_text_color;
+	width: 7em;
+}
+
+input[type=submit] {
+	border-radius: 100px;
+	margin: 0 0.25em;
+	cursor: pointer;
+	color: $text_color;
+}
+
+input[type=submit]:hover {
+	background: $accent_color;
+	color: $secondary_text_color;
+}
+
+progress[value] {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+
+	background-color: $background_color;
+	transition: all 1s linear;
+	border: none;
+	color: $accent_color;
+	height: 10px;
+	width: 100%;
+}
+
+progress[value]::-webkit-progress-value {
+	background-color: $accent_color;
+}
+
+progress[value]::-webkit-progress-bar {
+	background-color: transparent;
+}
+
+progress[value]::-moz-progress-bar {
+	background-color: $accent_color;
+}

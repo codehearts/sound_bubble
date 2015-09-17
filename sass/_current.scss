@@ -1,0 +1,81 @@
+#current {
+	height: 250px;
+
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+
+	-webkit-flex-flow: row nowrap;
+	-ms-flex-flow: row nowrap;
+	flex-flow: row nowrap;
+
+	-webkit-justify-content: space-between;
+	-ms-flex-pack: justify;
+	justify-content: space-between;
+
+	.artwork {
+		margin: 0;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		display: flex;
+		height: 250px;
+		min-width: 150px;
+		transition: width 1s ease;
+		-webkit-flex-shrink: 0;
+		-ms-flex-shrink: 0;
+		flex-shrink: 0;
+
+		& > img {
+			display: block;
+			height: 100%;
+		}
+	}
+
+	.meta {
+		background: white;
+		padding: 30px 40px;
+		-webkit-flex-grow: 1;
+		-ms-flex-grow: 1;
+		flex-grow: 1;
+	}
+
+	.title {
+		margin: 0;
+		font-size: 3.6em;
+		font-weight: 400;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
+	}
+
+	.artist {
+		margin: 0;
+		font-size: 2.1em;
+		font-weight: 700;
+		color: #909999;
+	}
+
+	.album {
+		display: none;
+	}
+
+	.time-data {
+		margin: 1.5em 0 0;
+		font-size: 1.4em;
+		font-weight: 400;
+		color: $tertiary_text_color;
+	}
+
+	.time {
+		margin-bottom: 2px;
+		float: left;
+	}
+
+	.length {
+		display: none;
+	}
+
+	progress {
+		float: left;
+	}
+}

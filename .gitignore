@@ -1,5 +1,7 @@
 *.swp
+*.lock
 *.py[cod]
 config.py
+.sass-cache
 __pycache__
 static/covers/

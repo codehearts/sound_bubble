@@ -1,0 +1,35 @@
+#masthead {
+	-webkit-transform-style: preserve-3d;
+	-moz-transform-style: preserve-3d;
+	transform-style: preserve-3d;
+
+	background: #c69;
+	margin: 0 0 1.8em;
+	padding: 0 5%;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-align-items: center;
+	align-items: center;
+	-webkit-justify-content: space-between;
+	justify-content: space-between;
+	color: #e0eeee;
+
+	h1 {
+		display: inline-block;
+		line-height: 1;
+		font-weight: 400;
+	}
+
+	input {
+		color: #e0eeee;
+
+		&:focus {
+			background: rgba(255,255,255,0.1);
+		}
+
+		&[type=submit]:hover {
+			background: #e0eeee;
+			color: #c69;
+		}
+	}
+}

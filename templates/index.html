@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
-	<article id="current">
+	<article id="current" class="content-section">
 		<figure class="artwork">
 			<img src="">
 		</figure>
@@ -24,7 +24,7 @@
 	</article>
 
 	{% if current_user.is_authenticated %}
-	<section class="playlist-editor">
+	<section class="playlist-editor content-section">
 		<form action="" method="post" enctype="multipart/form-data" class="add-song-form">
 			<input type="hidden" name="action" value="add_music">
 			<input type="file" name="song">

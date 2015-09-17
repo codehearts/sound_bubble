@@ -1,0 +1,48 @@
+.playlist-editor {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	padding: 40px;
+}
+
+.add-song-form {
+	display: inline-block;
+	position: relative;
+	overflow: hidden;
+
+	&::before {
+		content: '+ Add Music';
+		transition: all 0.25s ease;
+		margin: 0 0.25em;
+		padding: 0.1em 0.35em;
+		display: block;
+		font-size: 1.6em;
+	}
+
+	&:hover {
+		&::before {
+			background: #c69;
+			border-radius: 100px;
+			color: #e0eeee;
+		}
+	}
+
+	&.uploading {
+		cursor: default;
+
+		&::before {
+			content: 'Uploading Music...';
+		}
+	}
+
+	input[type=file] {
+		position: absolute;
+		top: 0;
+		right: 0;
+		margin: 0;
+		padding: 0;
+		font-size: 20px;
+		cursor: pointer;
+		opacity: 0;
+	}
+}
