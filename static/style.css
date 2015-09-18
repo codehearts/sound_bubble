@@ -245,8 +245,12 @@ progress[value]::-moz-progress-bar {
   .content-section {
     width: 100%; }
 
+  #masthead {
+    margin-bottom: 0; }
+
   #current {
     display: block;
+    margin-top: 0;
     height: auto; }
     #current .artwork {
       transition: height 1s ease;
