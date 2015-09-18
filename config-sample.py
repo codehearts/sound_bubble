@@ -9,6 +9,7 @@ TITLE = 'My Music'
 AUDIO_EXTENSIONS = set(['m4a', 'mp3'])
 
 COVERS_DIR      = 'static/covers/'
+COVERS_SIZE     = (600, 600)
 COVERS_FILETYPE = 'jpg'
 DEFAULT_ARTWORK = ''
 

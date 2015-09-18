@@ -3,6 +3,7 @@ from select import select
 from mpd import MPDClient
 from mutagen import File
 from hashlib import md5
+from PIL import Image
 import os.path
 import time
 
@@ -237,7 +238,11 @@ class AudioManager(object):
 			return self._config['DEFAULT_ARTWORK']
 
 		file_hash = md5(song_file).hexdigest()
-		image_file = self._config['COVERS_DIR'] + file_hash + '.' + self._config['COVERS_FILETYPE']
+		file_hash_path = self._config['COVERS_DIR'] + file_hash
+		image_file = file_hash_path + '.' + self._config['COVERS_FILETYPE']
+
+		resized_filename = file_hash_path + '_' + '_'.join(map(str, self._config['COVERS_SIZE']))
+		resized_file = resized_filename + '.' + self._config['COVERS_FILETYPE']
 
 		if not os.path.isfile(image_file):
 			song_file = File(self._config['MUSIC_DIR'] + song_file)
@@ -254,7 +259,11 @@ class AudioManager(object):
 			with open(image_file, 'wb') as image:
 				image.write(artwork)
 
-		return image_file
+			resize = Image.open(image_file)
+			resize.thumbnail(self._config['COVERS_SIZE'])
+			resize.save(resized_file)
+
+		return resized_file
 
 	def _update_current_song(self):
 		"""
