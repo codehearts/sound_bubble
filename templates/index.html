@@ -25,7 +25,12 @@
 
 	{% if current_user.is_authenticated %}
 	<section class="playlist-editor content-section">
-		<form action="" method="post" enctype="multipart/form-data" class="add-song-form">
+		<form action=""
+		      method="post"
+			  enctype="multipart/form-data"
+			  data-inactive-text="+ Add Music"
+			  data-active-text="Uploading Music..."
+			  class="file-upload add-song">
 			<input type="hidden" name="action" value="add_music">
 			<input type="file" name="song">
 		</form>

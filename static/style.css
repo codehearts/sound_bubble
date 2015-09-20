@@ -53,6 +53,35 @@ progress[value]::-webkit-progress-bar {
 progress[value]::-moz-progress-bar {
   background-color: #c69; }
 
+.file-upload {
+  display: inline-block;
+  position: relative;
+  overflow: hidden; }
+  .file-upload::before {
+    content: attr(data-inactive-text);
+    transition: all 0.25s ease;
+    margin: 0 0.25em;
+    padding: 0.1em 0.35em;
+    display: block;
+    font-size: 1.6em; }
+  .file-upload:hover::before {
+    background: #c69;
+    border-radius: 100px;
+    color: #e0eeee; }
+  .file-upload.active {
+    cursor: default; }
+    .file-upload.active::before {
+      content: attr(data-active-text); }
+  .file-upload input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0; }
+
 .content-section {
   background: #e0eeee;
   box-shadow: 0 0 10px #c0cccc;
@@ -211,35 +240,6 @@ progress[value]::-moz-progress-bar {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   padding: 40px; }
-
-.add-song-form {
-  display: inline-block;
-  position: relative;
-  overflow: hidden; }
-  .add-song-form::before {
-    content: '+ Add Music';
-    transition: all 0.25s ease;
-    margin: 0 0.25em;
-    padding: 0.1em 0.35em;
-    display: block;
-    font-size: 1.6em; }
-  .add-song-form:hover::before {
-    background: #c69;
-    border-radius: 100px;
-    color: #e0eeee; }
-  .add-song-form.uploading {
-    cursor: default; }
-    .add-song-form.uploading::before {
-      content: 'Uploading Music...'; }
-  .add-song-form input[type=file] {
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin: 0;
-    padding: 0;
-    font-size: 20px;
-    cursor: pointer;
-    opacity: 0; }
 
 @media (max-width: 640px) {
   .content-section {

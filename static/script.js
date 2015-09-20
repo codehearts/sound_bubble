@@ -11,8 +11,7 @@ var sound_bubble = (function() {
 		progress = document.querySelector('#current progress'),
 		button        = document.querySelector('#current .state-button'),
 		next_button   = document.querySelector('#current .next-button'),
-		add_song_form = document.querySelector('.add-song-form'),
-		add_song_file = null,
+		file_form     = document.querySelector('form.add-song'),
 		is_playing     = null,
 		start_time     = 0,
 		time_seconds   = 0,
@@ -169,11 +168,11 @@ var sound_bubble = (function() {
 			next_button.addEventListener('click', skip_audio);
 		}
 
-		if (add_song_form) {
-			add_song_file = add_song_form.querySelector('input[type=file]');
-			add_song_file.addEventListener('change', function() {
-				add_song_form.classList.add('uploading');
-				add_song_form.submit();
+		if (file_form) {
+			var file_field = file_form.querySelector('input[type=file]');
+			file_field.addEventListener('change', function() {
+				file_form.classList.add('active');
+				file_form.submit();
 			});
 		}
 
