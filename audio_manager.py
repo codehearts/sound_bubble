@@ -1,6 +1,7 @@
 from mutagen.id3 import ID3, APIC, error
 from mutagen.flac import Picture, FLAC
 from mutagen.mp4 import MP4, MP4Cover
+from mutagen.mp3 import MP3
 from threading import Thread
 from os import path, remove
 from select import select
@@ -260,8 +261,12 @@ class AudioManager(object):
 				artwork = song_file.pictures
 			elif 'covr' in song_file:
 				artwork = song_file['covr'][0]
-			elif 'APIC:' in song_file.tags:
-				artwork = song_file.tags['APIC:'].data
+			elif hasattr(song_file, 'tags'):
+				apic_key = next(k for k in song_file.tags.keys() if k.startswith('APIC:'))
+				if apic_key:
+					artwork = song_file.tags[apic_key].data
+				else:
+					return self._config['DEFAULT_ARTWORK']
 			else:
 				return self._config['DEFAULT_ARTWORK']
 
@@ -283,7 +288,7 @@ class AudioManager(object):
 			artwork_file (str): The path to the artwork file to embed.
 		"""
 		song_file = song.get('file', None)
-		song_path = self._config['MUSIC_DIR'] + song_file
+		song_path = path.join(self._config['MUSIC_DIR'], song_file)
 
 		file_hash = md5(song_file).hexdigest()
 		file_hash_path = self._config['COVERS_DIR'] + file_hash
@@ -319,7 +324,7 @@ class AudioManager(object):
 				audio.tags.add(
 					APIC(
 						encoding = 3, # 3 is UTF-8
-						mime     = minetype,
+						mime     = mimetype,
 						type     = 3, # 3 is for cover artwork
 						desc     = u'Cover Artwork',
 						data     = open(artwork_file, 'rb').read()))
