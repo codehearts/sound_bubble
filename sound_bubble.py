@@ -6,6 +6,7 @@ from flask import Flask, request, g, redirect, url_for, \
 from flask.ext.login import LoginManager, current_user, login_user, logout_user
 from flask.ext.socketio import SocketIO, emit
 from werkzeug import secure_filename
+import os.path
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -92,6 +93,17 @@ def show_index():
 				data = audio.add_new_song(filename)
 
 				msg = 'Added {} to the playlist.'.format(data['title'])
+		elif request.form['action'] == 'add_artwork' and current_user.is_authenticated:
+			artwork_file = request.files.get('artwork', None)
+			if artwork_file and audio.is_allowed_artwork_file(artwork_file.filename):
+				filename = secure_filename(artwork_file.filename)
+				filepath = os.path.join(app.config['TMP_DIR'], filename)
+				artwork_file.save(filepath)
+
+				song_title = audio.current_song['title']
+				audio.change_album_artwork(audio.current_song, filepath)
+
+				msg = 'Updated artwork for {}.'.format(song_title)
 
 	return render_template('index.html', error=error, message=msg)
 

@@ -114,6 +114,26 @@ progress[value]::-moz-progress-bar {
       background: #e0eeee;
       color: #c69; }
 
+.msg {
+  background: #e0eeee;
+  box-shadow: 0 0 10px #c0cccc;
+  margin: 0 auto;
+  padding: 10px;
+  font-size: 2.1em;
+  font-weight: 600;
+  color: #c69;
+  width: 90%; }
+
+.error-msg {
+  background: #f36;
+  box-shadow: 0 0 10px #c0cccc;
+  margin: 0 auto;
+  padding: 10px;
+  font-size: 2.1em;
+  font-weight: 600;
+  color: #e0eeee;
+  width: 90%; }
+
 #current {
   height: 250px;
   display: -webkit-flex;

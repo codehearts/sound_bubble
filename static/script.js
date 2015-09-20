@@ -11,7 +11,7 @@ var sound_bubble = (function() {
 		progress = document.querySelector('#current progress'),
 		button        = document.querySelector('#current .state-button'),
 		next_button   = document.querySelector('#current .next-button'),
-		file_form     = document.querySelector('form.add-song'),
+		file_forms    = document.querySelectorAll('.file-upload'),
 		is_playing     = null,
 		start_time     = 0,
 		time_seconds   = 0,
@@ -168,12 +168,14 @@ var sound_bubble = (function() {
 			next_button.addEventListener('click', skip_audio);
 		}
 
-		if (file_form) {
-			var file_field = file_form.querySelector('input[type=file]');
-			file_field.addEventListener('change', function() {
-				file_form.classList.add('active');
-				file_form.submit();
-			});
+		if (file_forms) {
+			var file_fields = document.querySelectorAll('.file-upload input[type=file]');
+			for (var i = 0; i < file_fields.length; i++) {
+				file_fields[i].addEventListener('change', function() {
+					this.parentNode.classList.add('active');
+					this.parentNode.submit();
+				});
+			}
 		}
 
 		// Tells the server that we've connected

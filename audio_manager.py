@@ -1,10 +1,13 @@
+from mutagen.id3 import ID3, APIC, error
+from mutagen.flac import Picture, FLAC
+from mutagen.mp4 import MP4, MP4Cover
 from threading import Thread
+from os import path, remove
 from select import select
 from mpd import MPDClient
 from mutagen import File
 from hashlib import md5
 from PIL import Image
-import os.path
 import time
 
 class AudioManager(object):
@@ -46,12 +49,14 @@ class AudioManager(object):
 		Arguments:
 			config (dict): A dictionary of config values.
 			               This is expected to include the following keys:
-						   MPD_HOST:        The hostname of the MPD instance
-						   MPD_PORT:        The port that the MPD instance is running on
-						   MUSIC_DIR:       The directory that MPD looks for music in.
-						   DEFAULT_ARTWORK: The URL for default album artwork.
-						   COVERS_DIR:      The directory to save album covers to.
-						   COVERS_FILETYPE: The file format to save album covers in.
+						   MPD_HOST:           The hostname of the MPD instance.
+						   MPD_PORT:           The port that the MPD instance is running on.
+						   MUSIC_DIR:          The directory that MPD looks for music in.
+						   DEFAULT_ARTWORK:    The URL for default album artwork.
+						   COVERS_DIR:         The directory to save album covers to.
+						   COVERS_FILETYPE:    The file format to save album covers in.
+						   AUDIO_EXTENSIONS:   List of allowed audio file extensions.
+						   ARTWORK_EXTENSIONS: List of allowed artwork file extensions.
 		"""
 		self._locks = []
 		self._callbacks = {}
@@ -219,6 +224,10 @@ class AudioManager(object):
 		"""Returns True if the filename has an allowed audio extension."""
 		return '.' in filename and filename.rsplit('.', 1)[1] in self._config['AUDIO_EXTENSIONS']
 
+	def is_allowed_artwork_file(self, filename):
+		"""Returns True if the filename has an allowed artwork extension."""
+		return '.' in filename and filename.rsplit('.', 1)[1] in self._config['ARTWORK_EXTENSIONS']
+
 
 
 	def _get_album_artwork_url(self, current):
@@ -244,7 +253,7 @@ class AudioManager(object):
 		resized_filename = file_hash_path + '_' + '_'.join(map(str, self._config['COVERS_SIZE']))
 		resized_file = resized_filename + '.' + self._config['COVERS_FILETYPE']
 
-		if not os.path.isfile(image_file):
+		if not path.isfile(image_file):
 			song_file = File(self._config['MUSIC_DIR'] + song_file)
 
 			if hasattr(song_file, 'pictures'):
@@ -265,7 +274,85 @@ class AudioManager(object):
 
 		return resized_file
 
-	def _update_current_song(self):
+	def change_album_artwork(self, song, artwork_file):
+		"""Embeds the given artwork in the given song file.
+		The artwork file will then be deleted once embedded.
+
+		Arguments:
+			song (dict): The return value from mpd.currentsong() or an equivalent.
+			artwork_file (str): The path to the artwork file to embed.
+		"""
+		song_file = song.get('file', None)
+		song_path = self._config['MUSIC_DIR'] + song_file
+
+		file_hash = md5(song_file).hexdigest()
+		file_hash_path = self._config['COVERS_DIR'] + file_hash
+		image_file = file_hash_path + '.' + self._config['COVERS_FILETYPE']
+
+		if path.isfile(song_path) and path.isfile(artwork_file):
+			if artwork_file.endswith('png'):
+				mimetype = 'image/png'
+			else:
+				mimetype = 'image/jpeg'
+
+			# Determine which filetype we're handling
+			if song_file.endswith('m4a'):
+				audio = MP4(song_path)
+				data = open(artwork_file, 'rb').read()
+
+				covr = []
+				if artwork_file.endswith('png'):
+					covr.append(MP4Cover(data, MP4Cover.FORMAT_PNG))
+				else:
+					covr.append(MP4Cover(data, MP4Cover.FORMAT_JPEG))
+
+				audio.tags['covr'] = covr
+			elif song_file.endswith('mp3'):
+				audio = MP3(song_path, ID3=ID3)
+
+				# Add ID3 tag if it doesn't exist
+				try:
+					audio.add_tags()
+				except error:
+					pass
+
+				audio.tags.add(
+					APIC(
+						encoding = 3, # 3 is UTF-8
+						mime     = minetype,
+						type     = 3, # 3 is for cover artwork
+						desc     = u'Cover Artwork',
+						data     = open(artwork_file, 'rb').read()))
+			elif song_file.endswith('flac'):
+				audio = FLAC(song_path)
+
+				image = Picture()
+				image.type = 3 # 3 is for cover artwork
+				image.mime = mimetype
+				image.desc = 'Cover Artwork'
+				image.data = open(artwork_file, 'rb').read()
+
+				audio.add_picture(image)
+
+		# Save the audio file
+		audio.save()
+
+		# Remove existing cached artwork
+		if path.isfile(image_file):
+			resized_filename = file_hash_path + '_' + '_'.join(map(str, self._config['COVERS_SIZE']))
+			resized_file = resized_filename + '.' + self._config['COVERS_FILETYPE']
+
+			remove(resized_file)
+			remove(image_file)
+
+		remove(artwork_file)
+
+		# Update the data for the current song
+		self._mpd_acquire()
+		self._update_current_song(reset_cache=True)
+		self._mpd_release()
+
+	def _update_current_song(self, reset_cache=False):
 		"""
 		Updates the `current_song` global to contain updated information
 		about the currently playing song.
@@ -273,9 +360,14 @@ class AudioManager(object):
 		current = self._mpd.currentsong()
 		status  = self._mpd.status()
 		timestamp = time.time()
+		cache_control = ''
+
+		if reset_cache:
+			cache_control = '?=' + str(time.time())
 
 		self.current_song = {
-			'artwork':    self._get_album_artwork_url(current),
+			'artwork':    self._get_album_artwork_url(current) + cache_control,
+			'file':       current['file'],
 			'title':      current['title'].decode('utf-8'),
 			'artist':     current.get('artist', 'Unknown Artist').decode('utf-8'),
 			'album':      current['album'].decode('utf-8'),
