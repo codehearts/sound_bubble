@@ -64,7 +64,7 @@ class MusicGen(object):
 
 			# Determine which filetype we're handling
 			if audio_file.endswith('m4a'):
-				audio = MP4(song_path)
+				audio = MP4(audio_file)
 
 				covr = []
 				if cover_file.endswith('png'):
@@ -74,7 +74,7 @@ class MusicGen(object):
 
 				audio.tags['covr'] = covr
 			elif audio_file.endswith('mp3'):
-				audio = MP3(song_path, ID3=ID3)
+				audio = MP3(audio_file, ID3=ID3)
 
 				# Add ID3 tags if they don't exist
 				try:
@@ -90,7 +90,7 @@ class MusicGen(object):
 						desc     = desc,
 						data     = artwork))
 			elif audio_file.endswith('flac'):
-				audio = FLAC(song_path)
+				audio = FLAC(audio_file)
 
 				image = Picture()
 				image.type = 3 # 3 is for cover artwork
@@ -98,6 +98,7 @@ class MusicGen(object):
 				image.desc = desc
 				image.data = artwork
 
+				audio.clear_pictures() # Clear existing pictures
 				audio.add_picture(image)
 
 		# Save the audio file
