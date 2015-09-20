@@ -26,11 +26,14 @@ class MusicGen(object):
 		"""
 		audio_file = File(audio_file)
 
-		if hasattr(audio_file, 'pictures'):
-			artwork = audio_file.pictures
+		if hasattr(audio_file, 'pictures') and len(audio_file.pictures):
+			# FLAC
+			artwork = audio_file.pictures[0].data
 		elif 'covr' in audio_file:
+			# MP3
 			artwork = audio_file['covr'][0]
 		elif hasattr(audio_file, 'tags'):
+			# M4A
 			apic_keys = [k for k in audio_file.tags.keys() if k.startswith('APIC:')]
 			if apic_keys:
 				artwork = audio_file.tags[apic_keys[0]].data
