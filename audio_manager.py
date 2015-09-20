@@ -61,6 +61,7 @@ class AudioManager(object):
 		"""
 		self._locks = []
 		self._callbacks = {}
+		self._idling = False
 		self._config = config
 		self._mpd = MPDClient()
 		self._mpd.connect(config['MPD_HOST'], config['MPD_PORT'])
@@ -113,12 +114,16 @@ class AudioManager(object):
 		thread to continue polling.
 		"""
 		self._locks.append(1)
-		self._mpd.noidle()
+		if (self._idling):
+			self._mpd.noidle()
+			self._idling = False
 
 	def _mpd_release(self):
 		"""Allows the idle thread to continue waiting for subsystem changes."""
 		self._locks.pop()
-		self._mpd.send_idle()
+		if (not self._locks and not self._idling):
+			self._mpd.send_idle()
+			self._idling = True
 
 	def _mpd_idle(self):
 		"""
@@ -128,16 +133,19 @@ class AudioManager(object):
 		"""
 		self._update_current_song()
 		self._mpd.send_idle()
+		self._idling = True
 
 		while True:
 			can_read = select([self._mpd], [], [], 0)[0]
 			if can_read and not self._locks:
+				self._idling = False
 				changes = self._mpd.fetch_idle()
 
 				if 'player' in changes:
 					self._update_current_song()
 
 				self._mpd.send_idle()
+				self._idling = True
 
 			time.sleep(1)
 
@@ -262,9 +270,9 @@ class AudioManager(object):
 			elif 'covr' in song_file:
 				artwork = song_file['covr'][0]
 			elif hasattr(song_file, 'tags'):
-				apic_key = next(k for k in song_file.tags.keys() if k.startswith('APIC:'))
-				if apic_key:
-					artwork = song_file.tags[apic_key].data
+				apic_keys = [k for k in song_file.tags.keys() if k.startswith('APIC:')]
+				if apic_keys:
+					artwork = song_file.tags[apic_keys[0]].data
 				else:
 					return self._config['DEFAULT_ARTWORK']
 			else:
