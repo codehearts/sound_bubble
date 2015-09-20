@@ -1,12 +1,8 @@
-from mutagen.id3 import ID3, APIC, error
-from mutagen.flac import Picture, FLAC
-from mutagen.mp4 import MP4, MP4Cover
-from mutagen.mp3 import MP3
+from musicgen import MusicGen
 from threading import Thread
 from os import path, remove
 from select import select
 from mpd import MPDClient
-from mutagen import File
 from hashlib import md5
 from PIL import Image
 import time
@@ -64,6 +60,8 @@ class AudioManager(object):
 		self._idling = False
 		self._config = config
 		self._mpd = MPDClient()
+		self._musicgen = MusicGen()
+
 		self._mpd.connect(config['MPD_HOST'], config['MPD_PORT'])
 
 		self.current_song = None
@@ -239,47 +237,33 @@ class AudioManager(object):
 
 
 
-	def _get_album_artwork_url(self, current):
+	def _get_album_artwork_url(self, song_file):
 		"""Returns the URL for the currently playing song's artwork.
+
 		If the artwork does not already exist on disk, it will be
-		extracted from the audio file and saved.
+		extracted from the audio file. A resized version of the
+		artwork will be created and used to reduce bandwidth.
 
 		Arguments:
-			current (dict): The return value from mpd.currentsong()
+			song_file (str): The filename of the audio file.
 
 		Returns:
-			A string containing the URL for the artwork.
+			A string containing the URL for the resized artwork.
 		"""
-		song_file = current.get('file', None)
+		song_file        = current.get('file', None)
+		song_path        = path.join(self._config['MUSIC_DIR'], song_file)
 
-		if song_file is None:
-			return self._config['DEFAULT_ARTWORK']
+		# The image filename is a hash of the song's filename
+		file_hash        = md5(song_file).hexdigest()
+		file_hash_path   = path.join(self._config['COVERS_DIR'], file_hash)
+		image_file       = file_hash_path + self._config['COVERS_FILETYPE']
 
-		file_hash = md5(song_file).hexdigest()
-		file_hash_path = self._config['COVERS_DIR'] + file_hash
-		image_file = file_hash_path + '.' + self._config['COVERS_FILETYPE']
-
+		# The resized image filename is {image_filename}_{width}_{height}
 		resized_filename = file_hash_path + '_' + '_'.join(map(str, self._config['COVERS_SIZE']))
-		resized_file = resized_filename + '.' + self._config['COVERS_FILETYPE']
+		resized_file     = resized_filename + self._config['COVERS_FILETYPE']
 
 		if not path.isfile(image_file):
-			song_file = File(self._config['MUSIC_DIR'] + song_file)
-
-			if hasattr(song_file, 'pictures'):
-				artwork = song_file.pictures
-			elif 'covr' in song_file:
-				artwork = song_file['covr'][0]
-			elif hasattr(song_file, 'tags'):
-				apic_keys = [k for k in song_file.tags.keys() if k.startswith('APIC:')]
-				if apic_keys:
-					artwork = song_file.tags[apic_keys[0]].data
-				else:
-					return self._config['DEFAULT_ARTWORK']
-			else:
-				return self._config['DEFAULT_ARTWORK']
-
-			with open(image_file, 'wb') as image:
-				image.write(artwork)
+			self._musicgen.extract_cover_art(song_path, image_file)
 
 			resize = Image.open(image_file)
 			resize.thumbnail(self._config['COVERS_SIZE'])
@@ -287,73 +271,28 @@ class AudioManager(object):
 
 		return resized_file
 
-	def change_album_artwork(self, song, artwork_file):
+	def change_album_artwork(self, song_file, artwork_file):
 		"""Embeds the given artwork in the given song file.
 		The artwork file will then be deleted once embedded.
 
 		Arguments:
-			song (dict): The return value from mpd.currentsong() or an equivalent.
+			song_file (str): The filename of the song to modify the cover art of.
 			artwork_file (str): The path to the artwork file to embed.
 		"""
-		song_file = song.get('file', None)
 		song_path = path.join(self._config['MUSIC_DIR'], song_file)
 
-		file_hash = md5(song_file).hexdigest()
-		file_hash_path = self._config['COVERS_DIR'] + file_hash
-		image_file = file_hash_path + '.' + self._config['COVERS_FILETYPE']
+		# The image filename is a hash of the song's filename
+		file_hash      = md5(song_file).hexdigest()
+		file_hash_path = path.join(self._config['COVERS_DIR'], file_hash)
+		image_file     = file_hash_path + self._config['COVERS_FILETYPE']
 
-		if path.isfile(song_path) and path.isfile(artwork_file):
-			if artwork_file.endswith('png'):
-				mimetype = 'image/png'
-			else:
-				mimetype = 'image/jpeg'
-
-			# Determine which filetype we're handling
-			if song_file.endswith('m4a'):
-				audio = MP4(song_path)
-				data = open(artwork_file, 'rb').read()
-
-				covr = []
-				if artwork_file.endswith('png'):
-					covr.append(MP4Cover(data, MP4Cover.FORMAT_PNG))
-				else:
-					covr.append(MP4Cover(data, MP4Cover.FORMAT_JPEG))
-
-				audio.tags['covr'] = covr
-			elif song_file.endswith('mp3'):
-				audio = MP3(song_path, ID3=ID3)
-
-				# Add ID3 tag if it doesn't exist
-				try:
-					audio.add_tags()
-				except error:
-					pass
-
-				audio.tags.add(
-					APIC(
-						encoding = 3, # 3 is UTF-8
-						mime     = mimetype,
-						type     = 3, # 3 is for cover artwork
-						desc     = u'Cover Artwork',
-						data     = open(artwork_file, 'rb').read()))
-			elif song_file.endswith('flac'):
-				audio = FLAC(song_path)
-
-				image = Picture()
-				image.type = 3 # 3 is for cover artwork
-				image.mime = mimetype
-				image.desc = 'Cover Artwork'
-				image.data = open(artwork_file, 'rb').read()
-
-				audio.add_picture(image)
-
-		# Save the audio file
-		audio.save()
+		self._musicgen.embed_cover_art(song_path, image_file)
 
 		# Remove existing cached artwork
 		if path.isfile(image_file):
+			# The resized image filename is {image_filename}_{width}_{height}
 			resized_filename = file_hash_path + '_' + '_'.join(map(str, self._config['COVERS_SIZE']))
-			resized_file = resized_filename + '.' + self._config['COVERS_FILETYPE']
+			resized_file     = resized_filename + self._config['COVERS_FILETYPE']
 
 			remove(resized_file)
 			remove(image_file)
@@ -379,7 +318,7 @@ class AudioManager(object):
 			cache_control = '?=' + str(time.time())
 
 		self.current_song = {
-			'artwork':    self._get_album_artwork_url(current) + cache_control,
+			'artwork':    self._get_album_artwork_url(current['file']) + cache_control,
 			'file':       current['file'],
 			'title':      current['title'].decode('utf-8'),
 			'artist':     current.get('artist', 'Unknown Artist').decode('utf-8'),

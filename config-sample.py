@@ -11,7 +11,7 @@ ARTWORK_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
 COVERS_DIR      = 'static/covers/'
 COVERS_SIZE     = (600, 600)
-COVERS_FILETYPE = 'jpg'
+COVERS_FILETYPE = '.jpg'
 DEFAULT_ARTWORK = ''
 
 MUSIC_DIR = '/home/me/Music/'
