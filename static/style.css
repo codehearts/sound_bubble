@@ -18,6 +18,7 @@ input {
 
 input[type=password],
 input[type=text] {
+  box-sizing: border-box;
   border-bottom: 1px solid #e0eeee;
   padding: 0 0.25em;
   color: #e0eeee;
@@ -114,9 +115,10 @@ progress[value]::-moz-progress-bar {
       background: #e0eeee;
       color: #c69; }
 
-.msg {
+.msg, .error-msg {
   background: #e0eeee;
   box-shadow: 0 0 10px #c0cccc;
+  box-sizing: border-box;
   margin: 0 auto;
   padding: 10px;
   font-size: 2.1em;
@@ -126,13 +128,7 @@ progress[value]::-moz-progress-bar {
 
 .error-msg {
   background: #f36;
-  box-shadow: 0 0 10px #c0cccc;
-  margin: 0 auto;
-  padding: 10px;
-  font-size: 2.1em;
-  font-weight: 600;
-  color: #e0eeee;
-  width: 90%; }
+  color: #e0eeee; }
 
 #current {
   height: 250px;
@@ -275,6 +271,7 @@ progress[value]::-moz-progress-bar {
     #current .artwork {
       transition: height 1s ease;
       background: #fff;
+      box-sizing: border-box;
       padding: 5% 5%;
       display: block;
       height: auto;

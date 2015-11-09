@@ -1,6 +1,7 @@
 .msg {
 	background: #e0eeee;
 	box-shadow: 0 0 10px #c0cccc;
+	box-sizing: border-box;
 	margin: 0 auto;
 	padding: 10px;
 	font-size: 2.1em;
@@ -10,12 +11,7 @@
 }
 
 .error-msg {
+	@extend .msg;
 	background: #f36;
-	box-shadow: 0 0 10px #c0cccc;
-	margin: 0 auto;
-	padding: 10px;
-	font-size: 2.1em;
-	font-weight: 600;
 	color: #e0eeee;
-	width: 90%;
 }

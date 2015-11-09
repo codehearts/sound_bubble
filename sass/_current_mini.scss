@@ -6,6 +6,7 @@
 	.artwork {
 		transition: height 1s ease;
 		background: #fff;
+		box-sizing: border-box;
 		padding: 5% 5%;
 		display: block;
 		height: auto;
