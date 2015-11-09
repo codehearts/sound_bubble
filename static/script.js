@@ -1,6 +1,7 @@
 /*eslint-env browser*/
+/*global io*/
 
-var sound_bubble = (function() {
+(function() {
 
 	var host     = 'http://' + window.location.host,
 		socket   = io.connect(host),
@@ -124,7 +125,7 @@ var sound_bubble = (function() {
 			toggle_button();
 		}
 
-		time_diff  = get_timestamp() - song_data.server_time;
+		var time_diff = get_timestamp() - song_data.server_time;
 		start_time = song_data.start_time + time_diff;
 		progress.setAttribute('data-start-time', start_time);
 
