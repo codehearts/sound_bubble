@@ -1,6 +1,3 @@
-/*eslint-env browser*/
-/*global io*/
-
 (function() {
 
 	var host     = 'http://' + window.location.host,
@@ -36,7 +33,7 @@
 		var time_split = time_string.split(':');
 
 		// Hours were not provided
-		if (time_split.length == 2) {
+		if (time_split.length === 2) {
 			return (+time_split[0]) * 60 + (+time_split[1]); 
 		}
 
@@ -120,7 +117,7 @@
 			toggle_button();
 		}
 
-		if (is_playing != song_data.is_playing) {
+		if (is_playing !== song_data.is_playing) {
 			is_playing = !is_playing;
 			toggle_button();
 		}
