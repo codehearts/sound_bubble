@@ -1,3 +1,5 @@
+/*eslint-env browser*/
+
 var sound_bubble = (function() {
 
 	var host     = 'http://' + window.location.host,
