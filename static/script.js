@@ -180,8 +180,6 @@
 
 		// Tells the server that we've connected
 		socket.on('connect', function() {
-			socket.emit('connect');
-
 			increment_time();
 			window.setInterval(increment_time, 1000);
 		});
