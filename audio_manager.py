@@ -1,6 +1,7 @@
 from musicgen import MusicGen
 from threading import Thread
 from os import path, remove
+from shutil import copyfile
 from select import select
 from mpd import MPDClient
 from hashlib import md5
@@ -48,6 +49,7 @@ class AudioManager(object):
 			               This is expected to include the following keys:
 						   MPD_HOST:           The hostname of the MPD instance.
 						   MPD_PORT:           The port that the MPD instance is running on.
+						   PLAYLIST:           The name of the MPD playlist to use.
 						   MUSIC_DIR:          The directory that MPD looks for music in.
 						   DEFAULT_ARTWORK:    The URL for default album artwork.
 						   COVERS_DIR:         The directory to save album covers to.
@@ -61,10 +63,15 @@ class AudioManager(object):
 		self._config = config
 		self._mpd = MPDClient()
 		self._musicgen = MusicGen()
+		self.playlist = config['PLAYLIST']
 
 		self._mpd.connect(config['MPD_HOST'], config['MPD_PORT'])
 
 		self.current_song = None
+
+		# Load the Sound Bubble playlist
+		self._ensure_playlist_exists(self.playlist)
+		self.load_playlist()
 
 		# Spin off a thread to wait for changes in MPD subsystems
 		self._mpd_thread = Thread(target=self._mpd_idle, name='mpd-worker', args=())
@@ -165,6 +172,36 @@ class AudioManager(object):
 		if h:
 			return '{:d}:{:02d}:{:02d}'.format(h, m, s)
 		return '{:d}:{:02d}'.format(m, s)
+
+
+
+	def _ensure_playlist_exists(self, name):
+		"""
+		Ensures that the given playlist exists, and creates it if now.
+		If the playlist must be created, the current song queue will be cleared.
+
+		Arguments:
+			name (str): The name of the playlist that should exist.
+		"""
+		for playlist in self._mpd.listplaylists():
+			if playlist['playlist'] == name:
+				return
+
+		self._mpd.clear()    # Empty the current song queue
+		self._mpd.save(name) # Save the empty playlist
+
+	def load_playlist(self):
+		"""
+		Sets the current MPD playlist to the Sound Bubble playlist.
+		"""
+		self._mpd.clear()             # Empty the current song queue
+		self._mpd.load(self.playlist) # Load songs from the Sound Bubble playlist
+
+	def save_playlist(self):
+		"""
+		Saves the current playlist to the MPD database as the Sound Bubble playlist.
+		"""
+		self._mpd.save(self.playlist)
 
 
 
