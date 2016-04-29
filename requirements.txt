@@ -1,6 +1,7 @@
 Flask
 flask-login
 Flask-SocketIO
+eventlet
 python-mpd2
 mutagen
 Pillow
