@@ -6,13 +6,15 @@ SECRET_KEY = 'development key'
 
 TITLE = 'My Music'
 
+PLAYLIST = 'Sound Bubble'
+
 AUDIO_EXTENSIONS = set(['m4a', 'mp3'])
 ARTWORK_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
 COVERS_DIR      = 'static/covers/'
 COVERS_SIZE     = (600, 600)
 COVERS_FILETYPE = '.jpg'
-DEFAULT_ARTWORK = ''
+DEFAULT_ARTWORK = 'no_album_art.png'
 
 MUSIC_DIR = '/home/me/Music/'
 MPD_HOST  = 'localhost'
