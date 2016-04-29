@@ -49,6 +49,8 @@ class MusicGen(object):
 		# Otherwise, write to the output file
 		with open(out_file, 'wb') as image_file:
 			image_file.write(artwork)
+
+		return True
 		
 	def embed_cover_art(self, audio_file, cover_file):
 		"""Embeds cover art into an audio file.

@@ -287,7 +287,9 @@ class AudioManager(object):
 		Returns:
 			A string containing the URL for the resized artwork.
 		"""
-		song_file        = current.get('file', None)
+		if song_file == '':
+			return path.join(self._config['COVERS_DIR'], self._config['DEFAULT_ARTWORK'])
+
 		song_path        = path.join(self._config['MUSIC_DIR'], song_file)
 
 		# The image filename is a hash of the song's filename
@@ -346,13 +348,33 @@ class AudioManager(object):
 		Updates the `current_song` global to contain updated information
 		about the currently playing song.
 		"""
-		current = self._mpd.currentsong()
-		status  = self._mpd.status()
-		timestamp = time.time()
 		cache_control = ''
-
 		if reset_cache:
 			cache_control = '?=' + str(time.time())
+
+		timestamp = time.time()
+		current = self._mpd.currentsong()
+
+		if current == {}:
+			self.current_song = {
+				'artwork':    self._get_album_artwork_url('') + cache_control,
+				'file':       '',
+				'title':      'Empty Playlist',
+				'artist':     '',
+				'album':      '',
+				'length_sec': '',
+				'time_sec':   '',
+				'start_time': timestamp,
+				'length':     '',
+				'time':       '',
+				'progress':   0,
+				'is_playing': False
+			}
+
+			self.fire_event('song change', self.current_song)
+			return
+
+		status = self._mpd.status()
 
 		self.current_song = {
 			'artwork':    self._get_album_artwork_url(current['file']) + cache_control,
