@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+{% block body %}
+	{% if current_user.is_authenticated %}
+	<section class="content-section">
+		<ul class="album-filters">
+			<li><a href="{{ url_for('albums_by', album_filter='other') }}">#</a></li>
+
+			<li><a href="{{ url_for('albums_by', album_filter='1-9') }}">1-9</a></li>
+
+			{# Links for A through Z #}
+			{% for ord in range(65, 90+1) %}
+			{% with chr="%c"|format(ord) %}
+			<li><a href="{{ url_for('albums_by', album_filter=chr) }}">{{ chr }}</a></li>
+			{% endwith %}
+			{% endfor %}
+		</ul>
+
+		{% if albums|count == 0 %}
+		<p>Nothing to show.</p>
+
+		{% else %}
+
+		<form action="" method="post">
+			{% for album in albums %}
+				<figure class="artwork">
+					<img src="{{ album.cover }}">
+					<figcaption>{{ album.name }}</figcaption>
+				</figure>
+
+				<ol class="album-listing">
+				{% for song in album.songs %}
+					<li>
+						{% if song.in_playlist %}
+						{{ song.title }} 
+
+						{% else %}
+
+						<label>
+							<input type="checkbox" value="{{ song.file }}">
+							{{ song.title }} 
+						</label>
+						{% endif %}
+					</li>
+				{% endfor %}
+				</ol>
+			{% endfor %}
+
+			<input type="hidden" name="action" value="add_music">
+			<input type="submit" value="Add to Sound Bubble">
+		</form>
+		{% endif %}
+	</section>
+	{% endif %}
+{% endblock %}

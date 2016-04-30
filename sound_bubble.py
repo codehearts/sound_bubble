@@ -105,7 +105,28 @@ def show_index():
 
 				msg = 'Updated artwork for {}.'.format(song_title)
 
-	return render_template('index.html', error=error, message=msg)
+	return render_template('index.html', error=error, message=msg, music_script=True)
+
+@app.route('/albums/', methods=['GET', 'POST'])
+def show_albums():
+	msg = None
+	error = None
+
+	return render_template('albums.html', error=error, message=msg, albums=[])
+
+@app.route('/albums/<album_filter>', methods=['GET', 'POST'])
+def albums_by(album_filter):
+	msg = None
+	error = None
+
+	if album_filter == '1-9':
+		album_filter = '1'
+	elif album_filter == 'other':
+		album_filter = '#'
+
+	albums = audio.get_albums(album_filter)
+
+	return render_template('albums.html', error=error, message=msg, albums=albums)
 
 
 
