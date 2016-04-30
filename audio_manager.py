@@ -61,7 +61,7 @@ class AudioManager(object):
 		self._callbacks = {}
 		self._idling = False
 		self._config = config
-		self._mpd = MPDClient()
+		self._mpd = MPDClient(use_unicode=True)
 		self._musicgen = MusicGen()
 		self.playlist = config['PLAYLIST']
 
@@ -321,34 +321,50 @@ class AudioManager(object):
 			name:  The name of the album.
 			cover: URL of the album artwork, taken from the first song.
 			songs: List of song dicts, as returned by MPDClient.find().
+			       The song dict is modified to contain an 'in_playlist' key,
+				   which is True if the song is in the current playlist and False otherwise.
 		"""
-		filter_by = filter_by.lower()
-		if not filter_by.isalnum() and filter_by != '#':
+		# Values for the type of filter we're using
+		alpha   = 0
+		numeric = 1
+		other   = 2
+
+		filter_type = alpha           # The type of filter to apply to the albums
+		filter_by = filter_by.lower() # The actual filter value to apply
+		if not filter_by.isalnum():
+			filter_type = other
 			filter_by = '#'
 		elif filter_by.isdigit():
+			filter_type = numeric
 			filter_by = '1'
 
 		albums = []
 
 		self._mpd_acquire()
-		current_playlist = self._mpd.playlist()
-		album_names = self._mpd.list('album')
+		current_playlist = self._mpd.playlist() # Get all songs in current playlist
+		album_names = self._mpd.list('album')   # Get all album names
 
 		for album in album_names:
-			if album[0].lower() != filter_by:
+			# Skip albums which do not meet the filter
+			if filter_type == alpha and album[0].lower() != filter_by:
+				continue
+			elif filter_type == numeric and not album[0].isdigit():
+				continue
+			elif filter_type == other and album[0].isalnum():
 				continue
 
+			# Find songs in the album
 			songs = self._mpd.find('Album', album)
+
+			# Retrieve the album art from the first song
 			art = self._get_album_artwork_url(songs[0]['file'])
 
+			# Set in_playlist to True if the song is in the current playlist, False otherwise
 			for song in songs:
 				if 'file: ' + song['file'] in current_playlist:
 					song['in_playlist'] = True
 				else:
 					song['in_playlist'] = False
-
-			if art is None:
-				art = path.join(self._config['COVERS_DIR'], self._config['DEFAULT_ARTWORK'])
 
 			albums.append({
 				'name':  album,
