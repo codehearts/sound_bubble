@@ -2,7 +2,7 @@ import time
 from sb_user import SoundBubbleUser
 from audio_manager import AudioManager
 from flask import Flask, request, g, redirect, url_for, \
-     abort, render_template, flash
+     abort, render_template, flash, session
 from flask.ext.login import LoginManager, current_user, login_user, logout_user
 from flask.ext.socketio import SocketIO, emit
 from werkzeug import secure_filename
@@ -68,11 +68,15 @@ def on_previous_song():
 
 
 
+def redirect_url(default='index'):
+    return request.args.get('next') or \
+           request.referrer or \
+           url_for(default)
 
 @app.route('/', methods=['GET', 'POST'])
 def show_index():
-	msg = None
-	error = None
+	msg = session.pop('message', None)
+	error = session.pop('error', None)
 
 	if request.method == 'POST':
 		if request.form['action'] == 'login':
@@ -107,17 +111,34 @@ def show_index():
 
 	return render_template('index.html', error=error, message=msg, music_script=True)
 
+@app.route('/add/', methods=['POST'])
+def add_music():
+	msg = session.pop('message', None)
+	error = session.pop('error', None)
+	song_count = 0
+
+	if request.method == 'POST' and request.form['action'] == 'add_music' and current_user.is_authenticated:
+		audio_files = request.form.getlist('files')
+
+		for audio_file in audio_files:
+			if audio.is_allowed_audio_file(audio_file):
+				audio.add_new_song(audio_file)
+				song_count += 1
+
+	session['message'] = 'Added {} songs to the playlist.'.format(song_count)
+	return redirect(redirect_url())
+
 @app.route('/albums/', methods=['GET', 'POST'])
 def show_albums():
-	msg = None
-	error = None
+	msg = session.pop('message', None)
+	error = session.pop('error', None)
 
 	return render_template('albums.html', error=error, message=msg, albums=[])
 
 @app.route('/albums/<album_filter>', methods=['GET', 'POST'])
 def albums_by(album_filter):
-	msg = None
-	error = None
+	msg = session.pop('message', None)
+	error = session.pop('error', None)
 
 	if album_filter == '1-9':
 		album_filter = '1'
