@@ -20,7 +20,7 @@
 
 		{% else %}
 
-		<form action="" method="post">
+			<form action="{{ url_for('add_music') }}" method="post">
 			{% for album in albums %}
 				<figure class="artwork">
 					<img src="{{ album.cover }}">
@@ -36,7 +36,7 @@
 						{% else %}
 
 						<label>
-							<input type="checkbox" value="{{ song.file }}">
+							<input type="checkbox" name="files" value="{{ song.file }}">
 							{{ song.title }} 
 						</label>
 						{% endif %}
