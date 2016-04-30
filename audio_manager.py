@@ -282,9 +282,6 @@ class AudioManager(object):
 		Returns:
 			A string containing the URL for the resized artwork.
 		"""
-		if song_file == '':
-			return '/' + path.join(self._config['COVERS_DIR'], self._config['DEFAULT_ARTWORK'])
-
 		song_path        = path.join(self._config['MUSIC_DIR'], song_file)
 
 		# The image filename is a hash of the song's filename
@@ -297,7 +294,10 @@ class AudioManager(object):
 		resized_file     = resized_filename + self._config['COVERS_FILETYPE']
 
 		if not path.isfile(image_file):
-			if self._musicgen.extract_cover_art(song_path, image_file) is None:
+			try:
+				self._musicgen.extract_cover_art(song_path, out_file=image_file)
+			except (IOError, RuntimeWarning):
+				# Return the default no-album-cover image
 				return '/' + path.join(self._config['COVERS_DIR'], self._config['DEFAULT_ARTWORK'])
 
 			resize = Image.open(image_file)
