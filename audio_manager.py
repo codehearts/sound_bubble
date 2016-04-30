@@ -197,12 +197,6 @@ class AudioManager(object):
 		self._mpd.clear()             # Empty the current song queue
 		self._mpd.load(self.playlist) # Load songs from the Sound Bubble playlist
 
-	def save_playlist(self):
-		"""
-		Saves the current playlist to the MPD database as the Sound Bubble playlist.
-		"""
-		self._mpd.save(self.playlist)
-
 
 
 	def play(self):
@@ -288,7 +282,7 @@ class AudioManager(object):
 			A string containing the URL for the resized artwork.
 		"""
 		if song_file == '':
-			return path.join(self._config['COVERS_DIR'], self._config['DEFAULT_ARTWORK'])
+			return '/' + path.join(self._config['COVERS_DIR'], self._config['DEFAULT_ARTWORK'])
 
 		song_path        = path.join(self._config['MUSIC_DIR'], song_file)
 
@@ -302,13 +296,68 @@ class AudioManager(object):
 		resized_file     = resized_filename + self._config['COVERS_FILETYPE']
 
 		if not path.isfile(image_file):
-			self._musicgen.extract_cover_art(song_path, image_file)
+			if self._musicgen.extract_cover_art(song_path, image_file) is None:
+				return '/' + path.join(self._config['COVERS_DIR'], self._config['DEFAULT_ARTWORK'])
 
 			resize = Image.open(image_file)
 			resize.thumbnail(self._config['COVERS_SIZE'])
 			resize.save(resized_file)
 
-		return resized_file
+		return '/' + resized_file
+
+	def get_albums(self, filter_by):
+		"""
+		Returns a filtered list of albums, including their songs and artwork.
+		
+		Arguments:
+			filter_by (str): Either a letter of the alphabet, a number, or #.
+							 Alpha: Only albums begining with that letter are returned.
+							 Numeric: Only albums begining with a number are returned.
+							 #: Albums begining with any other character are returned.
+							 Another other value will default to '#'.
+
+		Returns:
+			A list of albums dicts with the following fields:
+			name:  The name of the album.
+			cover: URL of the album artwork, taken from the first song.
+			songs: List of song dicts, as returned by MPDClient.find().
+		"""
+		filter_by = filter_by.lower()
+		if not filter_by.isalnum() and filter_by != '#':
+			filter_by = '#'
+		elif filter_by.isdigit():
+			filter_by = '1'
+
+		albums = []
+
+		self._mpd_acquire()
+		current_playlist = self._mpd.playlist()
+		album_names = self._mpd.list('album')
+
+		for album in album_names:
+			if album[0].lower() != filter_by:
+				continue
+
+			songs = self._mpd.find('Album', album)
+			art = self._get_album_artwork_url(songs[0]['file'])
+
+			for song in songs:
+				if 'file: ' + song['file'] in current_playlist:
+					song['in_playlist'] = True
+				else:
+					song['in_playlist'] = False
+
+			if art is None:
+				art = path.join(self._config['COVERS_DIR'], self._config['DEFAULT_ARTWORK'])
+
+			albums.append({
+				'name':  album,
+				'songs': songs,
+				'cover': art
+			})
+		self._mpd_release()
+
+		return albums
 
 	def change_album_artwork(self, song_file, artwork_file):
 		"""Embeds the given artwork in the given song file.
