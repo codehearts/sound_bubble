@@ -248,8 +248,9 @@ class AudioManager(object):
 		"""
 		self._mpd_acquire()
 
-		self._mpd.update()
-		self._mpd.idle('database') # Wait for the database to be updated
+		# TODO: Updating and idling are only neccessary for new uploads
+		# self._mpd.update()
+		# self._mpd.idle('database') # Wait for the database to be updated
 		self._mpd.add(filename)
 		self._mpd.playlistadd(self.playlist, filename)
 
