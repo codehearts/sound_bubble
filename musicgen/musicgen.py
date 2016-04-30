@@ -20,11 +20,20 @@ class MusicGen(object):
 		Arguments:
 			audio_file (str): The path to the audio file.
 
+		Kwargs:
+			out_file (str): The output file to write the artwork to.
+
+		Exceptions:
+			RuntimeWarning: Raised when the image file has no artwork.
+			IOError: Raised when the given audio file is a directory,
+			         or the file does not exist.
+
 		Returns:
 			Nothing if an output file is specified, otherwise
 			the cover art image data is returned.
 		"""
 		audio_file = File(audio_file)
+		artwork = None
 
 		if hasattr(audio_file, 'pictures') and len(audio_file.pictures):
 			# FLAC
@@ -37,10 +46,9 @@ class MusicGen(object):
 			apic_keys = [k for k in audio_file.tags.keys() if k.startswith('APIC:')]
 			if apic_keys:
 				artwork = audio_file.tags[apic_keys[0]].data
-			else:
-				return None
-		else:
-			return None
+
+		if artwork is None:
+			raise RuntimeWarning('{} contains no artwork.'.format(audio_file))
 
 		# Return the artwork data if no output file is specified
 		if out_file is None:
@@ -49,8 +57,6 @@ class MusicGen(object):
 		# Otherwise, write to the output file
 		with open(out_file, 'wb') as image_file:
 			image_file.write(artwork)
-
-		return True
 		
 	def embed_cover_art(self, audio_file, cover_file):
 		"""Embeds cover art into an audio file.
