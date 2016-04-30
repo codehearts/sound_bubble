@@ -251,6 +251,7 @@ class AudioManager(object):
 		self._mpd.update()
 		self._mpd.idle('database') # Wait for the database to be updated
 		self._mpd.add(filename)
+		self._mpd.playlistadd(self.playlist, filename)
 
 		song = self._mpd.find('filename', filename)[0]
 
