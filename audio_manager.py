@@ -297,7 +297,7 @@ class AudioManager(object):
 		if not path.isfile(image_file):
 			try:
 				self._musicgen.extract_cover_art(song_path, out_file=image_file)
-			except (IOError, RuntimeWarning):
+			except (IOError, NoAlbumArtError):
 				# Return the default no-album-cover image
 				return '/' + path.join(self._config['COVERS_DIR'], self._config['DEFAULT_ARTWORK'])
 

@@ -5,6 +5,10 @@ from mutagen.mp3 import MP3
 from mutagen import File
 from os import path
 
+class NoAlbumArtError(Exception):
+	"""Exception for when a file does not contain album artwork."""
+	pass
+
 class MusicGen(object):
 	"""A wrapper for mutagen which unifies the API for differing filetypes."""
 
@@ -24,7 +28,7 @@ class MusicGen(object):
 			out_file (str): The output file to write the artwork to.
 
 		Exceptions:
-			RuntimeWarning: Raised when the image file has no artwork.
+			NoAlbumArtError: Raised when the image file has no artwork.
 			IOError: Raised when the given audio file is a directory,
 			         or the file does not exist.
 
@@ -48,7 +52,7 @@ class MusicGen(object):
 				artwork = audio_file.tags[apic_keys[0]].data
 
 		if artwork is None:
-			raise RuntimeWarning('{} contains no artwork.'.format(audio_file))
+			raise NoAlbumArtError('{} contains no artwork.'.format(audio_file))
 
 		# Return the artwork data if no output file is specified
 		if out_file is None:
