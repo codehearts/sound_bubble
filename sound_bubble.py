@@ -1,8 +1,8 @@
 import time
 from sb_user import SoundBubbleUser
 from audio_manager import AudioManager
-from flask import Flask, request, g, redirect, url_for, \
-     abort, render_template, flash, session
+from flask import Flask, request, redirect, url_for, \
+     render_template, session
 from flask.ext.login import LoginManager, current_user, login_user, logout_user
 from flask.ext.socketio import SocketIO, emit
 from werkzeug import secure_filename
@@ -73,51 +73,68 @@ def redirect_url(default='index'):
            request.referrer or \
            url_for(default)
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def show_index():
 	msg = session.pop('message', None)
 	error = session.pop('error', None)
 
-	if request.method == 'POST':
-		if request.form['action'] == 'login':
-			user = SoundBubbleUser.get(request.form['username'])
-			if (user and user.password == request.form['password']):
-				login_user(user, remember=True)
-			else:
-				error = 'Invalid username or password.'
-		elif request.form['action'] == 'logout':
-			logout_user()
-		elif request.form['action'] == 'add_music' and current_user.is_authenticated:
-			audio_file = request.files.get('song', None)
-			if audio_file and audio.is_allowed_audio_file(audio_file.filename):
-				filename = secure_filename(audio_file.filename)
-				filepath = os.path.join(app.config['MUSIC_DIR'], filename)
-				audio_file.save(filepath)
-
-				data = audio.add_new_song(filename)
-
-				msg = 'Added {} to the playlist.'.format(data['title'])
-		elif request.form['action'] == 'add_artwork' and current_user.is_authenticated:
-			artwork_file = request.files.get('artwork', None)
-			if artwork_file and audio.is_allowed_artwork_file(artwork_file.filename):
-				filename = secure_filename(artwork_file.filename)
-				filepath = os.path.join(app.config['TMP_DIR'], filename)
-				artwork_file.save(filepath)
-
-				song_title = audio.current_song['title']
-				audio.change_album_artwork(audio.current_song, filepath)
-
-				msg = 'Updated artwork for {}.'.format(song_title)
-
 	return render_template('index.html', error=error, message=msg, music_script=True)
+
+@app.route('/login/', methods=['POST'])
+def login():
+	if request.method == 'POST':
+		user = SoundBubbleUser.get(request.form['username'])
+		if (user and user.password == request.form['password']):
+			login_user(user, remember=True)
+		else:
+			session['error'] = 'Invalid username or password.'
+
+	return redirect(redirect_url())
+
+@app.route('/logout/', methods=['POST'])
+def logout():
+	if request.method == 'POST':
+		logout_user()
+
+	return redirect(redirect_url())
+
+@app.route('/upload/music/', methods=['POST'])
+def upload_music():
+	if request.method == 'POST' and current_user.is_authenticated:
+		audio_file = request.files.get('song', None)
+		if audio_file and audio.is_allowed_audio_file(audio_file.filename):
+			filename = secure_filename(audio_file.filename)
+			filepath = os.path.join(app.config['MUSIC_DIR'], filename)
+			audio_file.save(filepath)
+
+			audio.update_database()
+			data = audio.add_new_song(filename)
+
+			session['message'] = 'Added {} to the playlist.'.format(data['title'])
+
+	return redirect(redirect_url())
+
+@app.route('/upload/artwork/', methods=['POST'])
+def upload_artwork():
+	if request.method == 'POST' and current_user.is_authenticated:
+		artwork_file = request.files.get('artwork', None)
+		if artwork_file and audio.is_allowed_artwork_file(artwork_file.filename):
+			filename = secure_filename(artwork_file.filename)
+			filepath = os.path.join(app.config['TMP_DIR'], filename)
+			artwork_file.save(filepath)
+
+			song_title = audio.current_song['title']
+			audio.change_album_artwork(audio.current_song, filepath)
+
+			session['message'] = 'Updated artwork for {}.'.format(song_title)
+
+	return redirect(redirect_url())
 
 @app.route('/add/', methods=['POST'])
 def add_music():
-	msg = session.pop('message', None)
-	error = session.pop('error', None)
 	song_count = 0
 
-	if request.method == 'POST' and request.form['action'] == 'add_music' and current_user.is_authenticated:
+	if request.method == 'POST' and current_user.is_authenticated:
 		audio_files = request.form.getlist('files')
 
 		for audio_file in audio_files:

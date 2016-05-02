@@ -236,9 +236,19 @@ class AudioManager(object):
 		self._mpd_release()
 
 
+	def update_database(self):
+		"""
+		Updates the MPD database. This should be called after new music has been added,
+		such as after a file upload.
+		"""
+		self._mpd_acquire()
+		self._mpd.update()
+		self._mpd.idle('database') # Wait for the database to be updated
+		self._mpd_release()
+
 	def add_new_song(self, filename):
 		"""
-		Updates the database and add a new file to the current playlist.
+		Add a file to the Sound Bubble playlist.
 
 		Arguments:
 			filename (str): The name of the file relative to the music directory.
@@ -248,9 +258,6 @@ class AudioManager(object):
 		"""
 		self._mpd_acquire()
 
-		# TODO: Updating and idling are only neccessary for new uploads
-		# self._mpd.update()
-		# self._mpd.idle('database') # Wait for the database to be updated
 		self._mpd.add(filename)
 		self._mpd.playlistadd(self.playlist, filename)
 

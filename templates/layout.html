@@ -19,8 +19,7 @@
 
 		{% if not current_user.is_authenticated %}
 
-		<form action="" method="POST">
-			<input type="hidden" name="action" value="login">
+			<form action="{{ url_for('login') }}" method="POST">
 			<input type="text" name="username">
 			<input type="password" name="password">
 			<input type="submit" value="Log In">
@@ -28,8 +27,7 @@
 
 		{% else %}
 
-		<form action="" method="POST">
-			<input type="hidden" name="action" value="logout">
+			<form action="{{ url_for('logout') }}" method="POST">
 			<input type="submit" value="Log Out">
 		</form>
 

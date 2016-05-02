@@ -25,23 +25,21 @@
 
 	{% if current_user.is_authenticated %}
 	<section class="playlist-editor content-section">
-		<form action=""
+		<form action="{{ url_for('upload_music') }}"
 		      method="post"
 			  enctype="multipart/form-data"
 			  data-inactive-text="+ Add Music"
 			  data-active-text="Uploading Music..."
 			  class="file-upload">
-			<input type="hidden" name="action" value="add_music">
 			<input type="file" name="song">
 		</form>
 
-		<form action=""
+		<form action="{{ url_for('upload_artwork') }}"
 		      method="post"
 			  enctype="multipart/form-data"
 			  data-inactive-text="Change Artwork"
 			  data-active-text="Uploading Artwork..."
 			  class="file-upload">
-			<input type="hidden" name="action" value="add_artwork">
 			<input type="file" name="artwork">
 		</form>
 	</section>
