@@ -1,1 +1,1 @@
-from musicgen import MusicGen
+from musicgen import MusicGen, NoAlbumArtError
