@@ -4,4 +4,5 @@
 config.py
 .sass-cache
 __pycache__
-static/covers/
+static/covers/*
+!static/covers/no_album_art.png
