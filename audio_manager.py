@@ -1,4 +1,4 @@
-from musicgen import MusicGen
+from musicgen import MusicGen, NoAlbumArtError
 from threading import Thread
 from os import path, remove
 from shutil import copyfile
@@ -69,10 +69,6 @@ class AudioManager(object):
 
 		self.current_song = None
 
-		# Load the Sound Bubble playlist
-		self._ensure_playlist_exists(self.playlist)
-		self.load_playlist()
-
 		# Spin off a thread to wait for changes in MPD subsystems
 		self._mpd_thread = Thread(target=self._mpd_idle, name='mpd-worker', args=())
 		self._mpd_thread.setDaemon(True)
@@ -136,6 +132,12 @@ class AudioManager(object):
 		When a change is detected, connected clients are notified and
 		`mpd idle` is called again.
 		"""
+		# Load the Sound Bubble playlist
+		self._ensure_playlist_exists(self.playlist)
+		self.load_playlist()
+		self._mpd.play()
+		self._mpd.pause()
+
 		self._update_current_song()
 		self._mpd.send_idle()
 		self._idling = True
