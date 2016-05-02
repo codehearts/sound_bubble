@@ -1,7 +1,6 @@
 (function() {
 
-	var host     = 'http://' + window.location.host,
-		socket   = io.connect(host),
+	var socket   = io(),
 		artwork  = document.querySelector('#current .artwork img'),
 		title    = document.querySelector('#current .title'),
 		artist   = document.querySelector('#current .artist'),
@@ -182,10 +181,12 @@
 		socket.on('connect', function() {
 			increment_time();
 			window.setInterval(increment_time, 1000);
-		});
 
-		// Updates the current song when the server sends a 'song change' event
-		socket.on('song change', update_current_song);
+			// Updates the current song when the server sends a 'song change' event
+			socket.on('song change', update_current_song);
+
+			socket.emit('get current song');
+		});
 	};
 
 	init();

@@ -10,7 +10,7 @@ import os.path
 
 app = Flask(__name__)
 app.config.from_object('config')
-socket = SocketIO(app)
+socket = SocketIO(app, async_mode='threading')
 
 SoundBubbleUser.register_users({
 	app.config['USERNAME']: app.config['PASSWORD']
@@ -38,6 +38,10 @@ def notify_song_change(song):
 
 @socket.on('connect')
 def on_connect():
+	pass
+
+@socket.on('get current song')
+def on_get_current_song():
 	data = audio.current_song
 	data['server_time'] = time.time()
 	emit('song change', data)
