@@ -6,11 +6,16 @@ from flask import Flask, request, redirect, url_for, \
 from flask.ext.login import LoginManager, current_user, login_user, logout_user
 from flask.ext.socketio import SocketIO, emit
 from werkzeug import secure_filename
+from os import makedirs
 import os.path
 
 app = Flask(__name__)
 app.config.from_object('config')
 socket = SocketIO(app, async_mode='threading')
+
+# Ensure the tmp dir exists
+if not os.path.exists(app.config['TMP_DIR']):
+	makedirs(app.config['TMP_DIR'])
 
 SoundBubbleUser.register_users({
 	app.config['USERNAME']: app.config['PASSWORD']
@@ -128,7 +133,7 @@ def upload_artwork():
 			artwork_file.save(filepath)
 
 			song_title = audio.current_song['title']
-			audio.change_album_artwork(audio.current_song, filepath)
+			audio.change_album_artwork(audio.current_song['file'], filepath)
 
 			session['message'] = 'Updated artwork for {}.'.format(song_title)
 
