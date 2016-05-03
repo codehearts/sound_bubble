@@ -20,4 +20,5 @@ MUSIC_DIR = '/home/me/Music/'
 MPD_HOST  = 'localhost'
 MPD_PORT  = 6600
 
-TMP_DIR = 'static/tmp/'
+TMP_DIR = 'static/tmp/'       # Directory for temporary files
+MUSIC_UPLOAD_DIR = 'uploads/' # Directory within MUSIC_DIR for storing music uploads
