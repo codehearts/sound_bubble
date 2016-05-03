@@ -279,7 +279,7 @@ class AudioManager(object):
 
 
 
-	def _get_album_artwork_url(self, song_file):
+	def _get_album_artwork_url(self, song_file, use_cache=True):
 		"""Returns the URL for the currently playing song's artwork.
 
 		If the artwork does not already exist on disk, it will be
@@ -288,6 +288,11 @@ class AudioManager(object):
 
 		Arguments:
 			song_file (str): The filename of the audio file.
+
+		Kwargs:
+			use_cache (bool): Whether to use cached artwork on disk.
+			                  Useful if the embedded album artwork has changed.
+							  (Defaults to True)
 
 		Returns:
 			A string containing the URL for the resized artwork.
@@ -303,10 +308,17 @@ class AudioManager(object):
 		resized_filename = file_hash_path + '_' + '_'.join(map(str, self._config['COVERS_SIZE']))
 		resized_file     = resized_filename + self._config['COVERS_FILETYPE']
 
-		if not path.isfile(image_file):
+		if not path.isfile(image_file) or not use_cache:
 			try:
 				self._musicgen.extract_cover_art(song_path, out_file=image_file)
 			except (IOError, NoAlbumArtError):
+				# Delete any cached artwork if there is no longer embedded artwork
+				if not use_cache:
+					if path.isfile(resized_file):
+						remove(resized_file)
+					if path.isfile(image_file):
+						remove(image_file)
+
 				# Return the default no-album-cover image
 				return '/' + path.join(self._config['COVERS_DIR'], self._config['DEFAULT_ARTWORK'])
 
@@ -395,23 +407,7 @@ class AudioManager(object):
 			artwork_file (str): The path to the artwork file to embed.
 		"""
 		song_path = path.join(self._config['MUSIC_DIR'], song_file)
-
-		# The image filename is a hash of the song's filename
-		file_hash      = md5(song_file).hexdigest()
-		file_hash_path = path.join(self._config['COVERS_DIR'], file_hash)
-		image_file     = file_hash_path + self._config['COVERS_FILETYPE']
-
-		self._musicgen.embed_cover_art(song_path, image_file)
-
-		# Remove existing cached artwork
-		if path.isfile(image_file):
-			# The resized image filename is {image_filename}_{width}_{height}
-			resized_filename = file_hash_path + '_' + '_'.join(map(str, self._config['COVERS_SIZE']))
-			resized_file     = resized_filename + self._config['COVERS_FILETYPE']
-
-			remove(resized_file)
-			remove(image_file)
-
+		self._musicgen.embed_cover_art(song_path, artwork_file)
 		remove(artwork_file)
 
 		# Update the data for the current song
@@ -423,6 +419,10 @@ class AudioManager(object):
 		"""
 		Updates the `current_song` global to contain updated information
 		about the currently playing song.
+
+		Kwargs:
+			reset_cache: Whether to reload cached elements.
+			             This will reload the cache for album artwork.
 		"""
 		cache_control = ''
 		if reset_cache:
@@ -453,7 +453,7 @@ class AudioManager(object):
 		status = self._mpd.status()
 
 		self.current_song = {
-			'artwork':    self._get_album_artwork_url(current['file']) + cache_control,
+			'artwork':    self._get_album_artwork_url(current['file'], use_cache=(not reset_cache)) + cache_control,
 			'file':       current['file'],
 			'title':      current['title'].decode('utf-8'),
 			'artist':     current.get('artist', 'Unknown Artist').decode('utf-8'),
