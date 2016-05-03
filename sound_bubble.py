@@ -9,9 +9,13 @@ from werkzeug import secure_filename
 from os import makedirs
 import os.path
 
+# TODO Necessary for eventlet to work with background threads
+import eventlet
+eventlet.monkey_patch()
+
 app = Flask(__name__)
 app.config.from_object('config')
-socket = SocketIO(app, async_mode='threading')
+socket = SocketIO(app)
 
 # Set the absolute path to the music upload directory
 app.config['ABS_MUSIC_UPLOAD_DIR'] = os.path.join(app.config['MUSIC_DIR'], app.config['MUSIC_UPLOAD_DIR'])
