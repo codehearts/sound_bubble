@@ -13,9 +13,16 @@ app = Flask(__name__)
 app.config.from_object('config')
 socket = SocketIO(app, async_mode='threading')
 
+# Set the absolute path to the music upload directory
+app.config['ABS_MUSIC_UPLOAD_DIR'] = os.path.join(app.config['MUSIC_DIR'], app.config['MUSIC_UPLOAD_DIR'])
+
 # Ensure the tmp dir exists
 if not os.path.exists(app.config['TMP_DIR']):
 	makedirs(app.config['TMP_DIR'])
+
+# Ensure the music upload dir exists
+if not os.path.exists(app.config['ABS_MUSIC_UPLOAD_DIR']):
+	makedirs(app.config['ABS_MUSIC_UPLOAD_DIR'])
 
 SoundBubbleUser.register_users({
 	app.config['USERNAME']: app.config['PASSWORD']
@@ -112,7 +119,7 @@ def upload_music():
 	if request.method == 'POST' and current_user.is_authenticated:
 		audio_file = request.files.get('song', None)
 		if audio_file and audio.is_allowed_audio_file(audio_file.filename):
-			filename = secure_filename(audio_file.filename)
+			filename = os.path.join(app.config['MUSIC_UPLOAD_DIR'], secure_filename(audio_file.filename))
 			filepath = os.path.join(app.config['MUSIC_DIR'], filename)
 			audio_file.save(filepath)
 
