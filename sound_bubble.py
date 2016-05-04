@@ -94,7 +94,7 @@ def redirect_url(default='index'):
            url_for(default)
 
 @app.route('/', methods=['GET'])
-def show_index():
+def index():
 	msg = session.pop('message', None)
 	error = session.pop('error', None)
 
@@ -166,7 +166,7 @@ def add_music():
 	return redirect(redirect_url())
 
 @app.route('/albums/', methods=['GET', 'POST'])
-def show_albums():
+def albums():
 	msg = session.pop('message', None)
 	error = session.pop('error', None)
 

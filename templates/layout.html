@@ -15,11 +15,11 @@
 </head>
 <body>
 	<header id="masthead">
-		<h1>{{ config.TITLE }}</h1>
+		<h1><a href="{{ url_for('index') }}">{{ config.TITLE }}</a></h1>
 
 		{% if not current_user.is_authenticated %}
 
-			<form action="{{ url_for('login') }}" method="POST">
+		<form action="{{ url_for('login') }}" method="POST">
 			<input type="text" name="username">
 			<input type="password" name="password">
 			<input type="submit" value="Log In">
@@ -27,7 +27,9 @@
 
 		{% else %}
 
-			<form action="{{ url_for('logout') }}" method="POST">
+		<a href="{{ url_for('albums') }}">Albums</a>
+
+		<form action="{{ url_for('logout') }}" method="POST">
 			<input type="submit" value="Log Out">
 		</form>
 
