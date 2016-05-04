@@ -204,37 +204,25 @@ class AudioManager(object):
 	def play(self):
 		"""Plays the current song"""
 		self._mpd_acquire()
-
 		self._mpd.play()
-		self._update_current_song()
-
 		self._mpd_release()
 
 	def pause(self):
 		"""Pauses the current song"""
 		self._mpd_acquire()
-
 		self._mpd.pause()
-		self._update_current_song()
-
 		self._mpd_release()
 
 	def play_previous_song(self):
 		"""Plays the previous song."""
 		self._mpd_acquire()
-
 		self._mpd.previous()
-		self._update_current_song()
-
 		self._mpd_release()
 
 	def play_next_song(self):
 		"""Plays the next song."""
 		self._mpd_acquire()
-
 		self._mpd.next()
-		self._update_current_song()
-
 		self._mpd_release()
 
 
