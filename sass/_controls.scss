@@ -1,13 +1,18 @@
 .audio-controls {
-	float: right;
+	margin: 15px auto 0;
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+	max-width: 85%;
 
 	a {
 		border-radius: 100%;
+		border: 6px solid $accent_color;
 		position: relative;
 		display: inline-block;
 		cursor: pointer;
-		height: 30px;
-		width: 30px;
+		height: 62px;
+		width: 62px;
 
 		&:hover {
 			background: $accent_color;
@@ -30,13 +35,19 @@
 			content: '';
 		}
 	}
+
+	.play-button,
+	.pause-button {
+		height: 100px;
+		width: 100px;
+	}
 }
 
 .play-button {
 	&::before {
-		border-top: 9px solid transparent;
-		border-bottom: 9px solid transparent;
-		border-left: 14px solid $accent_color;
+		border-top: 32px solid transparent;
+		border-bottom: 32px solid transparent;
+		border-left: 46px solid $accent_color;
 		top: 20%;
 		left: 33.333%;
 		height: 0;
@@ -72,9 +83,9 @@
 
 .next-button {
 	&::before {
-		border-top: 9px solid transparent;
-		border-bottom: 9px solid transparent;
-		border-left: 14px solid $accent_color;
+		border-top: 19px solid transparent;
+		border-bottom: 19px solid transparent;
+		border-left: 29px solid $accent_color;
 		top: 20%;
 		left: 23.333%;
 		height: 0;
@@ -92,5 +103,30 @@
 	&:hover {
 		&::after { background:#fff; }
 		&::before { border-left-color: #fff; }
+	}
+}
+
+.prev-button {
+	&::before {
+		border-top: 19px solid transparent;
+		border-bottom: 19px solid transparent;
+		border-right: 29px solid $accent_color;
+		top: 20%;
+		right: 23.333%;
+		height: 0;
+		width: 0;
+	}
+
+	&::after {
+		background: $accent_color;
+		top: 20%;
+		left: 23.333%;
+		height: 60%;
+		width: 13.333%;
+	}
+
+	&:hover {
+		&::after { background:#fff; }
+		&::before { border-right-color: #fff; }
 	}
 }

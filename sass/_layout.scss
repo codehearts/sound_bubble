@@ -2,5 +2,6 @@
 	background: $secondary_text_color;
 	box-shadow: 0 0 10px $shadow_color;
 	margin: 5% auto 0;
-	width: 90%;
+	max-width: 1175px;
+	width: 1175px; // TODO: Change to percent
 }

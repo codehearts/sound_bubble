@@ -16,24 +16,6 @@
 <body>
 	<header id="masthead">
 		<h1><a href="{{ url_for('index') }}">{{ config.TITLE }}</a></h1>
-
-		{% if not current_user.is_authenticated %}
-
-		<form action="{{ url_for('login') }}" method="POST">
-			<input type="text" name="username">
-			<input type="password" name="password">
-			<input type="submit" value="Log In">
-		</form>
-
-		{% else %}
-
-		<a href="{{ url_for('albums') }}">Albums</a>
-
-		<form action="{{ url_for('logout') }}" method="POST">
-			<input type="submit" value="Log Out">
-		</form>
-
-		{% endif %}
 	</header>
 
 	{% if error %}

@@ -1,9 +1,9 @@
 body {
-  background: #d0dddd;
+  background: #f69;
   margin: 0;
   font-family: "Avenir Next", Avenir, "Helvetica Neue", sans-serif;
   font-size: 11px;
-  color: #c69; }
+  color: #1a1a1a; }
 
 input {
   -webkit-appearance: none;
@@ -31,28 +31,28 @@ input[type=submit] {
   color: #606666; }
 
 input[type=submit]:hover {
-  background: #c69;
+  background: #1a1a1a;
   color: #e0eeee; }
 
 progress[value] {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  background-color: #d0dddd;
+  background-color: #f69;
   transition: all 1s linear;
   border: none;
-  color: #c69;
+  color: #1a1a1a;
   height: 10px;
   width: 100%; }
 
 progress[value]::-webkit-progress-value {
-  background-color: #c69; }
+  background-color: #1a1a1a; }
 
 progress[value]::-webkit-progress-bar {
   background-color: transparent; }
 
 progress[value]::-moz-progress-bar {
-  background-color: #c69; }
+  background-color: #1a1a1a; }
 
 .file-upload {
   display: inline-block;
@@ -66,7 +66,7 @@ progress[value]::-moz-progress-bar {
     display: block;
     font-size: 1.6em; }
   .file-upload:hover::before {
-    background: #c69;
+    background: #1a1a1a;
     border-radius: 100px;
     color: #e0eeee; }
   .file-upload.active {
@@ -87,14 +87,13 @@ progress[value]::-moz-progress-bar {
   background: #e0eeee;
   box-shadow: 0 0 10px #c0cccc;
   margin: 5% auto 0;
-  width: 90%; }
+  max-width: 1175px;
+  width: 1175px; }
 
 #masthead {
   -webkit-transform-style: preserve-3d;
   -moz-transform-style: preserve-3d;
   transform-style: preserve-3d;
-  background: #c69;
-  margin: 0 0 1.8em;
   padding: 0 5%;
   display: -webkit-flex;
   display: flex;
@@ -102,18 +101,21 @@ progress[value]::-moz-progress-bar {
   align-items: center;
   -webkit-justify-content: space-between;
   justify-content: space-between;
-  color: #e0eeee; }
+  color: #e0eeee;
+  width: 375px;
+  max-width: 375px; }
   #masthead h1 {
     display: inline-block;
     line-height: 1;
     font-weight: 400; }
   #masthead input {
-    color: #e0eeee; }
+    color: #e0eeee;
+    padding: 5px 10px; }
     #masthead input:focus {
       background: rgba(255, 255, 255, 0.1); }
     #masthead input[type=submit]:hover {
       background: #e0eeee;
-      color: #c69; }
+      color: #1a1a1a; }
 
 .msg, .error-msg {
   background: #e0eeee;
@@ -130,75 +132,70 @@ progress[value]::-moz-progress-bar {
   background: #f36;
   color: #e0eeee; }
 
-#current {
-  height: 250px;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-flex-flow: row nowrap;
-  -ms-flex-flow: row nowrap;
-  flex-flow: row nowrap;
-  -webkit-justify-content: space-between;
-  -ms-flex-pack: justify;
-  justify-content: space-between; }
-  #current .artwork {
-    margin: 0;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    height: 250px;
-    min-width: 150px;
-    transition: width 1s ease;
-    -webkit-flex-shrink: 0;
-    -ms-flex-shrink: 0;
-    flex-shrink: 0; }
-    #current .artwork > img {
-      display: block;
-      height: 100%; }
-  #current .meta {
-    background: white;
-    padding: 30px 40px;
-    -webkit-flex-grow: 1;
-    -ms-flex-grow: 1;
-    flex-grow: 1; }
-  #current .title {
-    margin: 0;
-    font-size: 3.6em;
-    font-weight: 400;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden; }
-  #current .artist {
-    margin: 0;
-    font-size: 2.1em;
-    font-weight: 700;
-    color: #909999; }
-  #current .album {
-    display: none; }
-  #current .time-data {
-    margin: 1.5em 0 0;
-    font-size: 1.4em;
-    font-weight: 400;
-    color: #909999; }
-  #current .time {
-    margin-bottom: 2px;
-    float: left; }
-  #current .length {
-    display: none; }
-  #current progress {
-    float: left; }
+#current .artwork {
+  margin: 0;
+  float: left;
+  margin-right: 25px;
+  max-width: 375px;
+  width: 375px;
+  transition: width 1s ease; }
+  #current .artwork > img {
+    display: block;
+    max-width: 100%; }
+#current .meta {
+  background: #1a1a1a;
+  box-sizing: border-box;
+  float: right;
+  position: relative;
+  padding: 10px 30px;
+  max-width: 775px;
+  width: 775px; }
+#current .title {
+  margin: 0;
+  font-size: 3.6em;
+  font-weight: 400;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden; }
+#current .artist {
+  margin: 0;
+  font-size: 2.1em;
+  font-weight: 700;
+  color: #909999; }
+#current .album {
+  display: none; }
+#current .time-data {
+  margin: 1.5em 0 0;
+  font-size: 1.4em;
+  font-weight: 400;
+  color: #909999; }
+#current .time {
+  margin-bottom: 2px;
+  float: left; }
+#current .length {
+  display: none; }
+#current progress {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0; }
 
 .audio-controls {
-  float: right; }
+  margin: 15px auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  max-width: 85%; }
   .audio-controls a {
     border-radius: 100%;
+    border: 6px solid #1a1a1a;
     position: relative;
     display: inline-block;
     cursor: pointer;
-    height: 30px;
-    width: 30px; }
+    height: 62px;
+    width: 62px; }
     .audio-controls a:hover {
-      background: #c69;
+      background: #1a1a1a;
       color: #e0eeee; }
     .audio-controls a {
       transition: background 0.25s ease; }
@@ -208,11 +205,15 @@ progress[value]::-moz-progress-bar {
       display: block;
       position: absolute;
       content: ''; }
+  .audio-controls .play-button,
+  .audio-controls .pause-button {
+    height: 100px;
+    width: 100px; }
 
 .play-button::before {
-  border-top: 9px solid transparent;
-  border-bottom: 9px solid transparent;
-  border-left: 14px solid #c69;
+  border-top: 32px solid transparent;
+  border-bottom: 32px solid transparent;
+  border-left: 46px solid #1a1a1a;
   top: 20%;
   left: 33.333%;
   height: 0;
@@ -221,7 +222,7 @@ progress[value]::-moz-progress-bar {
   border-left-color: #fff; }
 
 .pause-button::before, .pause-button::after {
-  background: #c69;
+  background: #1a1a1a;
   top: 20%;
   height: 60%;
   width: 13.333%; }
@@ -233,15 +234,15 @@ progress[value]::-moz-progress-bar {
   background: #fff; }
 
 .next-button::before {
-  border-top: 9px solid transparent;
-  border-bottom: 9px solid transparent;
-  border-left: 14px solid #c69;
+  border-top: 19px solid transparent;
+  border-bottom: 19px solid transparent;
+  border-left: 29px solid #1a1a1a;
   top: 20%;
   left: 23.333%;
   height: 0;
   width: 0; }
 .next-button::after {
-  background: #c69;
+  background: #1a1a1a;
   top: 20%;
   right: 23.333%;
   height: 60%;
@@ -251,11 +252,31 @@ progress[value]::-moz-progress-bar {
 .next-button:hover::before {
   border-left-color: #fff; }
 
+.prev-button::before {
+  border-top: 19px solid transparent;
+  border-bottom: 19px solid transparent;
+  border-right: 29px solid #1a1a1a;
+  top: 20%;
+  right: 23.333%;
+  height: 0;
+  width: 0; }
+.prev-button::after {
+  background: #1a1a1a;
+  top: 20%;
+  left: 23.333%;
+  height: 60%;
+  width: 13.333%; }
+.prev-button:hover::after {
+  background: #fff; }
+.prev-button:hover::before {
+  border-right-color: #fff; }
+
 .playlist-editor {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  padding: 40px; }
+  padding: 40px;
+  display: none; }
 
 @media (max-width: 640px) {
   .content-section {
@@ -302,6 +323,6 @@ progress[value]::-moz-progress-bar {
   .next-button::before {
     border-top: 24px solid transparent;
     border-bottom: 24px solid transparent;
-    border-left: 37px solid #c69; } }
+    border-left: 37px solid #1a1a1a; } }
 
 /*# sourceMappingURL=style.css.map */

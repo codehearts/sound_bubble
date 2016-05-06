@@ -3,15 +3,29 @@
 	<article id="current" class="content-section">
 		<figure class="artwork">
 			<img src="">
-		</figure>
-		<section class="meta">
-			{% if current_user.is_authenticated %}
-				<div class="audio-controls">
-					<a class="state-button"></a>
-					<a class="next-button"></a>
-				</div>
-			{% endif %}
 
+			{% if current_user.is_authenticated %}
+			<div class="audio-controls">
+				<a class="prev-button"></a>
+				<a class="state-button"></a>
+				<a class="next-button"></a>
+			</div>
+
+			<form action="{{ url_for('logout') }}" method="POST">
+				<input type="submit" value="Log Out">
+			</form>
+
+			{% else %}
+
+			<form action="{{ url_for('login') }}" method="POST">
+				<input type="text" name="username">
+				<input type="password" name="password">
+				<input type="submit" value="Log In">
+			</form>
+			{% endif %}
+		</figure>
+
+		<section class="meta">
 			<h1 class="title"></h1>
 			<h2 class="artist"></h2>
 			<h3 class="album"></h3>
